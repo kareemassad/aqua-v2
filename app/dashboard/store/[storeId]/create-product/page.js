@@ -15,7 +15,7 @@ const CreateProduct = () => {
     setIsModalOpen(false);
     // Optionally, refresh the product list or perform other actions
     toast.success("Product created successfully");
-    router.push(`/dashboard/store/${params.storeId}/products`);
+    router.push(`/dashboard/stores/${params.storeId}/products`);
   };
 
   return (

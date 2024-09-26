@@ -21,16 +21,23 @@ export default function ProductsPage() {
 
   useEffect(() => {
     const fetchStoreId = async () => {
+      if (!session) return;
+
       try {
-        const response = await axios.get('/api/store');
-        setStoreId(response.data.storeId);
+        const response = await axios.get('/api/stores');
+        // Assuming the response contains a list of stores, pick the first one or the appropriate store
+        if (response.data.stores && response.data.stores.length > 0) {
+          setStoreId(response.data.stores[0]._id);
+        } else {
+          toast.error("No store found for the user.");
+        }
       } catch (error) {
         console.error('Error fetching store ID:', error);
         toast.error('Error fetching store information');
       }
     };
     fetchStoreId();
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     if (storeId) {
@@ -63,8 +70,8 @@ export default function ProductsPage() {
   };
 
   const handleProductAdded = () => {
-    setIsAddModalOpen(false);
     fetchProducts();
+    setIsAddModalOpen(false);
   };
 
   return (

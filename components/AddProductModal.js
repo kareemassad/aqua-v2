@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,11 @@ import ImageDropZone from "@/components/uploadthing/ImageDropZone";
 export default function AddProductModal({ isOpen, onClose, onProductAdded, storeId }) {
   const [form, setForm] = useState({
     name: "",
-    id_number: "",
     cost_price: "",
     sell_price: "",
     inventory: 0,
     description: "",
+    image: ""
   });
   const [imageUrl, setImageUrl] = useState("");
 
@@ -27,7 +27,6 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, store
     if (type === "image") {
       setImageUrl(url);
     }
-    // Handle Excel upload success if needed
   };
 
   const handleSubmit = async (e) => {
@@ -35,7 +34,7 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, store
 
     const payload = {
       ...form,
-      store_id: storeId,
+      store_id: storeId, // Ensure storeId is included in the payload
       image: imageUrl,
     };
 
@@ -64,15 +63,6 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, store
               value={form.name}
               onChange={handleChange}
               required
-            />
-          </div>
-          <div>
-            <Label htmlFor="id_number">ID Number (Optional)</Label>
-            <Input
-              id="id_number"
-              name="id_number"
-              value={form.id_number}
-              onChange={handleChange}
             />
           </div>
           <div>

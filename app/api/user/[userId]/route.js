@@ -4,47 +4,41 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 import Store from "@/models/Store";
 import Product from "@/models/Product";
+import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
+  const { userId } = params;
+  const session = await getServerSession(authOptions);
+
+  console.log(`Received dashboard request for userId: ${userId}`);
+  console.log(`Session userId: ${session?.user.id}`);
+
+  if (!session || session.user.id !== userId) {
+    console.warn("Unauthorized access attempt");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const { userId } = params;
-
-    if (session.user.id !== userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
     await connectMongo();
-    const store = await Store.findOne({ user_id: userId });
+
+    const user = await User.findById(userId).lean();
+    if (!user) {
+      console.warn(`User not found: ${userId}`);
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const store = await Store.findOne({ user_id: userId }).lean();
     if (!store) {
-      return new Response(JSON.stringify({ error: "Store not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      console.warn(`Store not found for userId: ${userId}`);
+      return NextResponse.json({ error: "Store not found" }, { status: 404 });
     }
 
     const products = await Product.find({ store_id: store._id }).lean();
 
-    return new Response(JSON.stringify({ products }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.log(`Fetched ${products.length} products for storeId: ${store._id}`);
+    return NextResponse.json({ user, store, products }, { status: 200 });
   } catch (error) {
-    console.error("Error in GET /api/user/[userId]:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Error fetching dashboard data:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

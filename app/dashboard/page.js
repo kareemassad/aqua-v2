@@ -7,37 +7,55 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Package, Link as LinkIcon, CreditCard, Settings } from 'lucide-react';
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState({
-    name: "",
-    email: "",
-    storeName: "",
     productCount: 0,
     activeLinks: 0,
     pendingOrders: 0,
-    totalSales: 0
+    totalSales: 0,
+    email: '',
+    storeName: '',
   });
 
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (session?.user?.id) {
+    const fetchDashboardData = async () => {
+      if (status === "authenticated" && session?.user?.id) {
         try {
-          const response = await axios.get(`/api/user/${session.user.id}/dashboard`);
-          setUser(response.data);
+          setIsLoading(true);
+          const response = await axios.get(`/api/dashboard`);
+          setDashboardData(response.data);
+          setUser(prevUser => ({
+            ...prevUser,
+            email: response.data.user.email,
+            storeName: response.data.store.name,
+            productCount: response.data.store.productCount,
+          }));
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching dashboard data:", error);
+          toast.error("Failed to load dashboard data. Please try again.");
+        } finally {
+          setIsLoading(false);
         }
       }
     };
 
-    fetchUserData();
-  }, [session]);
+    fetchDashboardData();
+  }, [session, status]);
 
+  if (status === "loading" || isLoading) return <div>Loading...</div>;
+  if (!session) return <div>Please sign in to view the dashboard.</div>;
+  if (!dashboardData) return <div>No data found. Please try refreshing the page.</div>;
+
+  // Render your dashboard content here using the dashboardData state
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6">Welcome, {user.name}</h1>
+      <h1 className="text-3xl font-bold mb-6">Welcome, {session.user.name}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <Card>
@@ -46,7 +64,7 @@ export default function Dashboard() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{user.productCount}</div>
+            <div className="text-2xl font-bold">{user?.productCount}</div>
           </CardContent>
         </Card>
         <Card>

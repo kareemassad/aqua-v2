@@ -17,50 +17,116 @@ export async function POST(request) {
 
   try {
     const payload = await request.json();
-    const { name, id_number, cost_price, sell_price, inventory, description, store_id, image } = payload;
+    console.log("Received payload for product creation:", payload);
+
+    const {
+      name,
+      cost_price,
+      sell_price,
+      inventory,
+      description,
+      store_id,
+      image,
+      id_number,
+    } = payload;
 
     // Validate required fields
-    if (!name || cost_price == null || sell_price == null || inventory == null) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!name || cost_price == null || sell_price == null || inventory == null || !store_id) {
+      console.warn("Missing required fields");
+      return NextResponse.json(
+        { error: "Missing required fields: name, cost_price, sell_price, inventory, store_id" },
+        { status: 400 }
+      );
     }
+
+    // Parse numerical values
+    const parsedCostPrice = parseFloat(cost_price);
+    const parsedSellPrice = parseFloat(sell_price);
+    const parsedInventory = parseInt(inventory, 10);
 
     // Validate data types
     if (
-      typeof name !== 'string' ||
-      typeof cost_price !== 'number' ||
-      typeof sell_price !== 'number' ||
-      typeof inventory !== 'number'
+      typeof name !== "string" ||
+      isNaN(parsedCostPrice) ||
+      isNaN(parsedSellPrice) ||
+      isNaN(parsedInventory)
     ) {
-      return NextResponse.json({ error: "Invalid data types for fields" }, { status: 400 });
+      console.warn("Invalid data types for fields");
+      return NextResponse.json(
+        { error: "Invalid data types for fields: name must be string, cost_price, sell_price, inventory must be valid numbers" },
+        { status: 400 }
+      );
+    }
+
+    // Additional Validation: Ensure numerical fields are valid numbers
+    if (
+      !Number.isFinite(parsedCostPrice) ||
+      !Number.isFinite(parsedSellPrice) ||
+      !Number.isInteger(parsedInventory)
+    ) {
+      console.warn("Invalid numerical values");
+      return NextResponse.json(
+        { error: "Invalid numerical values for cost_price, sell_price, or inventory" },
+        { status: 400 }
+      );
     }
 
     // Optional fields validation
-    const sanitizedDescription = description ? validator.escape(description.toString()) : "";
-    const sanitizedIdNumber = id_number ? validator.escape(id_number.toString()) : "";
+    const sanitizedDescription = description
+      ? validator.escape(description.toString())
+      : "";
+    const sanitizedIdNumber = id_number
+      ? validator.escape(id_number.toString())
+      : uuidv4(); // Generate if not provided
     const sanitizedImage = image ? validator.escape(image.toString()) : "";
 
     // Check for duplicate products based on unique identifier (id_number)
     if (sanitizedIdNumber) {
-      const existingProduct = await Product.findOne({ store_id: store_id, id_number: sanitizedIdNumber });
+      const existingProduct = await Product.findOne({
+        store_id: store_id,
+        id_number: sanitizedIdNumber,
+      });
       if (existingProduct) {
-        return NextResponse.json({ error: "Duplicate product based on id_number" }, { status: 409 });
+        console.warn("Duplicate product based on id_number");
+        return NextResponse.json(
+          { error: "Duplicate product based on id_number" },
+          { status: 409 }
+        );
       }
     }
 
-    // Create new product with backend-assigned ID
+    // Ensure store exists and belongs to the user
+    const store = await Store.findOne({
+      _id: store_id,
+      user_id: session.user.id,
+    });
+
+    if (!store) {
+      console.warn("Store not found or unauthorized");
+      return NextResponse.json(
+        { error: "Store not found or unauthorized" },
+        { status: 404 }
+      );
+    }
+
+    // Create new product with backend-assigned ID and id_number
     const newProduct = await Product.create({
       store_id: store_id,
       name: validator.escape(name),
-      sell_price: parseFloat(sell_price),
-      cost_price: parseFloat(cost_price),
-      inventory: parseInt(inventory, 10),
+      sell_price: parsedSellPrice,
+      cost_price: parsedCostPrice,
+      inventory: parsedInventory,
       description: sanitizedDescription,
       id_number: sanitizedIdNumber,
       image: sanitizedImage,
       product_id: uuidv4(), // Backend-assigned ID
     });
 
-    return NextResponse.json({ message: "Product created successfully", product: newProduct }, { status: 201 });
+    console.log("Product created successfully:", newProduct);
+    return NextResponse.json(
+      { message: "Product created successfully", product: newProduct },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating product:", error);
     return NextResponse.json({ error: "Error creating product" }, { status: 500 });
