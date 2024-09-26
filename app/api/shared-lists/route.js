@@ -1,5 +1,5 @@
-import SharedList from '../../../models/SharedList';
-import connectDB from '../../../config/database';
+import SharedList from '@/models/SharedList';
+import connectDB from '@/libs/mongoose';
 
 export async function GET(request) {
     try {

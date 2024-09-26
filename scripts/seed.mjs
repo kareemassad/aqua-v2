@@ -29,6 +29,7 @@ async function seedDatabase() {
 		}
 
 		// Seed Users
+		/*
 		const userId = "clhrlpinp0000qxkahsiu3m83"; // Use a consistent ID
 		const user = {
 			_id: userId,
@@ -98,6 +99,7 @@ async function seedDatabase() {
 		console.log("Seeded Products");
 
 		console.log("Database seeding completed successfully");
+		*/
 	} catch (error) {
 		console.error("Error seeding database:", error);
 	} finally {

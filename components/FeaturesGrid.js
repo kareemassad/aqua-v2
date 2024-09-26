@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
+import { Button } from "@/components/ui/button"
 
 const features = [
   {
@@ -28,9 +29,12 @@ const features = [
               <span>Terms & privacy pages don&apos;t need them</span>
               <span className="w-[2px] h-6 bg-primary animate-pulse"></span>
             </div>
-            <button className="btn shadow-lg btn-primary absolute right-4 bottom-6 opacity-0 group-hover:opacity-100 duration-1000">
+            <Button
+              className="shadow-lg btn-primary absolute right-4 bottom-6 opacity-0 group-hover:opacity-100 duration-1000"
+              variant="primary"
+            >
               Submit
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -70,8 +74,9 @@ const features = [
                 {feature.secondaryText}
               </p>
             </div>
-            <button
-              className={`px-4 py-2 rounded-box group text-center text-lg duration-150 border border-transparent bg-primary text-primary-content`}
+            <Button
+              className="px-4 py-2 rounded-box group text-center text-lg duration-150 border border-transparent"
+              variant="primary"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +93,7 @@ const features = [
                 <path d="m18 15-6-6-6 6" />
               </svg>
               {feature.votes}
-            </button>
+            </Button>
           </div>
         ))}
       </div>
@@ -133,8 +138,9 @@ const features = [
                     <p className="font-semibold mb-1">Clickable cards</p>
                     <p className="opacity-80">Make cards more accessible</p>
                   </div>
-                  <button
+                  <Button
                     className={`px-4 py-2 rounded-box group text-center text-lg duration-150 border border-transparent ${theme.buttonStyles}`}
+                    variant="primary"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -151,15 +157,16 @@ const features = [
                       <path d="m18 15-6-6-6 6" />
                     </svg>
                     8
-                  </button>
+                  </Button>
                 </div>
                 <div className="p-4 bg-base-100 rounded-box flex justify-between ">
                   <div>
                     <p className="font-semibold mb-1">Bigger images</p>
                     <p className="opacity-80">Make cards more accessible</p>
                   </div>
-                  <button
+                  <Button
                     className={`px-4 py-2 rounded-box group text-center text-lg duration-150 border border-transparent ${theme.buttonStyles}`}
+                    variant="primary"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +183,7 @@ const features = [
                       <path d="m18 15-6-6-6 6" />
                     </svg>
                     5
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

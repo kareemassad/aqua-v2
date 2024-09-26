@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/libs/dbConnect";
+import connectMongo from "@/libs/mongoose";
 import Product from "@/models/Product";
 
 export async function GET(request, { params }) {
-  await dbConnect();
+  await connectMongo();
   const { userId } = params;
 
   try {

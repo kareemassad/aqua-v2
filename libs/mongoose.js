@@ -18,4 +18,4 @@ const connectMongo = async () => {
   }
 };
 
-export { connectMongo, mongoose };
+export default connectMongo;

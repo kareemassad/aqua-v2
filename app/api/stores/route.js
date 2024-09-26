@@ -1,5 +1,5 @@
-import Store from '../../../models/Store';
-import connectDB from '../../../config/database';
+import Store from '@/models/Store';
+import connectDB from '@/libs/mongoose';
 
 export async function GET(request) {
     try {

@@ -1,17 +1,14 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
+    domains: [
+      // NextJS <Image> component needs to whitelist domains for src={}
+      "lh3.googleusercontent.com",
+      "pbs.twimg.com",
+      "images.unsplash.com",
+      "logos-world.net",
     ],
-  },
-  env: {
-    API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
-  },
+  }
 };
 
 module.exports = nextConfig;

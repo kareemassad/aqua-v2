@@ -1,5 +1,5 @@
-import Subscription from '../../../models/Subscription';
-import connectDB from '../../../config/database';
+import Subscription from '@/models/Subscription';
+import connectDB from '@/libs/mongoose';
 
 export async function GET(request) {
     try {

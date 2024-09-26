@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import dbConnect from "@/libs/dbConnect";
+import { authOptions } from "@/libs/next-auth";
+import connectMongo from "@/libs/mongoose";
 import Store from "@/models/Store";
 import Product from "@/models/Product";
-import xlsx from 'xlsx';
+import ExcelJS from 'exceljs';
 import validator from "validator";
 import { v4 as uuidv4 } from "uuid";
 
@@ -14,44 +14,51 @@ export async function POST(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await dbConnect();
+  await connectMongo();
 
   try {
     const formData = await request.formData();
-    const file = formData.get('file');
+    const excelUrl = formData.get('fileUrl'); // URL from UploadThing
     const storeId = formData.get('storeId');
-
-    if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    const userId = formData.get('userId');
+    if (!excelUrl) {
+      return NextResponse.json({ error: "No file URL provided" }, { status: 400 });
     }
 
     if (!storeId || !validator.isMongoId(storeId)) {
       return NextResponse.json({ error: "Valid Store ID is required" }, { status: 400 });
     }
 
-    // Validate file type
-    const allowedTypes = [
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.ms-excel'
-    ];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type. Only Excel files are allowed." }, { status: 400 });
+    // Fetch the Excel file from the URL
+    const response = await fetch(excelUrl);
+    if (!response.ok) {
+      return NextResponse.json({ error: "Failed to fetch Excel file" }, { status: 400 });
     }
 
-    // Limit file size to 5MB
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "File size exceeds 5MB limit." }, { status: 400 });
-    }
+    const buffer = await response.arrayBuffer();
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(Buffer.from(buffer));
+    const worksheet = workbook.worksheets[0];
+    const data = [];
 
-    const buffer = await file.arrayBuffer();
-    const workbook = xlsx.read(buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const data = xlsx.utils.sheet_to_json(worksheet);
+    // Convert worksheet to JSON
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+      const rowData = {};
+      row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
+        if (rowNumber === 1) {
+          rowData.header = cell.text;
+        } else {
+          const header = worksheet.getRow(1).getCell(colNumber).text;
+          rowData[header] = cell.text;
+        }
+      });
+      if (rowNumber > 1) { // Skip header row
+        data.push(rowData);
+      }
+    });
 
     // Validate store ownership
-    const store = await Store.findOne({ _id: storeId, user_id: session.user.id });
+    const store = await Store.findOne({ _id: storeId, user_id: userId });
     if (!store) {
       return NextResponse.json({ error: "Store not found or unauthorized" }, { status: 404 });
     }
@@ -61,65 +68,54 @@ export async function POST(request) {
     const errors = [];
 
     for (const [index, row] of data.entries()) {
-      const { name, sell_price, inventory, description, serial_number, id_number, image } = row;
+      const { name, sell_price, inventory, description, id_number, image } = row;
 
       // Validate required fields
       if (!name || sell_price == null || inventory == null) {
         results.invalid += 1;
-        errors.push({ row: index + 1, error: "Missing required fields: name, sell_price, inventory" });
+        errors.push({ row: index + 2, error: "Missing required fields: name, sell_price, inventory" });
         continue;
       }
 
       // Validate data types
       if (
         typeof name !== 'string' ||
-        typeof sell_price !== 'number' ||
-        typeof inventory !== 'number'
+        isNaN(parseFloat(sell_price)) ||
+        isNaN(parseInt(inventory, 10))
       ) {
         results.invalid += 1;
-        errors.push({ row: index + 1, error: "Invalid data types for name, sell_price, or inventory" });
+        errors.push({ row: index + 2, error: "Invalid data types for name, sell_price, or inventory" });
         continue;
       }
 
       // Optional fields validation
       const sanitizedDescription = description ? validator.escape(description.toString()) : "";
-      const sanitizedSerialNumber = serial_number ? validator.escape(serial_number.toString()) : "";
       const sanitizedIdNumber = id_number ? validator.escape(id_number.toString()) : "";
       const sanitizedImage = image ? validator.escape(image.toString()) : "";
 
-      // Check for duplicate products based on unique identifiers
+      // Check for duplicate products based on unique identifier (id_number)
       let duplicate = false;
-      if (sanitizedSerialNumber) {
-        const existingProduct = await Product.findOne({ store_id: storeId, serial_number: sanitizedSerialNumber });
-        if (existingProduct) {
-          duplicate = true;
-          results.duplicates += 1;
-          errors.push({ row: index + 1, error: "Duplicate product based on serial_number" });
-        }
-      }
-
-      if (sanitizedIdNumber && !duplicate) {
+      if (sanitizedIdNumber) {
         const existingProduct = await Product.findOne({ store_id: storeId, id_number: sanitizedIdNumber });
         if (existingProduct) {
           duplicate = true;
           results.duplicates += 1;
-          errors.push({ row: index + 1, error: "Duplicate product based on id_number" });
+          errors.push({ row: index + 2, error: "Duplicate product based on id_number" });
         }
       }
 
       if (duplicate) continue;
 
-      // Create new product
+      // Create new product with backend-assigned ID
       await Product.create({
         store_id: storeId,
         name: validator.escape(name),
         sell_price: parseFloat(sell_price),
         inventory: parseInt(inventory, 10),
         description: sanitizedDescription,
-        serial_number: sanitizedSerialNumber,
         id_number: sanitizedIdNumber,
         image: sanitizedImage,
-        product_id: uuidv4(),
+        product_id: uuidv4(), // Backend-assigned ID
       });
 
       results.created += 1;

@@ -1,9 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-
-// <FAQ> component is a lsit of <Item> component
-// Just import the FAQ & add your FAQ content to the const faqList
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqList = [
   {
@@ -89,20 +87,31 @@ const Item = ({ item }) => {
 
 const FAQ = () => {
   return (
-    <section className="bg-base-200" id="faq">
-      <div className="py-24 px-8 max-w-7xl mx-auto flex flex-col md:flex-row gap-12">
-        <div className="flex flex-col text-left basis-1/2">
-          <p className="inline-block font-semibold text-primary mb-4">FAQ</p>
-          <p className="sm:text-4xl text-3xl font-extrabold text-base-content">
-            Frequently Asked Questions
-          </p>
-        </div>
-
-        <ul className="basis-1/2">
-          {faqList.map((item, i) => (
-            <Item key={i} item={item} />
-          ))}
-        </ul>
+    <section className="bg-gray-50" id="faq">
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
+          Frequently Asked Questions
+        </h2>
+        <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>What tech stack do you use?</AccordionTrigger>
+            <AccordionContent>
+              We use a modern tech stack including React, Next.js, and Node.js, with options for SQL or NoSQL databases.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger>Can I customize the components?</AccordionTrigger>
+            <AccordionContent>
+              Yes, all our components are fully customizable to fit your brand and design needs.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger>Do you offer refunds?</AccordionTrigger>
+            <AccordionContent>
+              We offer a 30-day money-back guarantee if you&apos;re not satisfied with our product.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </section>
   );
