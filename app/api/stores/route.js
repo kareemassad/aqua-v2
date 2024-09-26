@@ -1,9 +1,9 @@
 import Store from '@/models/Store';
-import connectDB from '@/libs/mongoose';
+import connectMongo from '@/libs/mongoose';
 
 export async function GET(request) {
     try {
-        await connectDB();
+        await connectMongo();
         const stores = await Store.find().populate('user_id');
         return new Response(JSON.stringify({ stores }), {
             status: 200,
@@ -19,7 +19,7 @@ export async function GET(request) {
 
 export async function POST(request) {
     try {
-        await connectDB();
+        await connectMongo();
         const data = await request.json();
         const newStore = new Store(data);
         await newStore.save();

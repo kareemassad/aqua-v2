@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/products
+  url: {{baseUrl}}/api/products/create
   auth: bearer
   body: json
 }
@@ -22,8 +22,11 @@ body:json {
   {
     "name": "Test Product",
     "description": "This is a test product",
-    "price": 19.99,
-    "storeId": "{{storeId}}"
+    "cost_price": 15.99,
+    "sell_price": 19.99,
+    "inventory": 100,
+    "store_id": "{{storeId}}",
+    "image": "https://example.com/image.jpg"
   }
 }
 

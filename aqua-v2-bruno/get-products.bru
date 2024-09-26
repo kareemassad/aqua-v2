@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/products/{{userId}}
+  url: {{baseUrl}}/api/products?page=1&limit=10&search=&store_id={{storeId}}
   auth: bearer
 }
 
@@ -19,6 +19,6 @@ auth:bearer {
 
 vars:pre-request {
   baseUrl: http://localhost:3000
-  userId: 66f31b17049a5ad0cdd0186d
+  storeId: // Add the store ID here
   authToken: // Add your auth token here
 }

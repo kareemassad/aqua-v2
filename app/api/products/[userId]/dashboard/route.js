@@ -7,6 +7,7 @@ import User from "@/models/User";
 import Store from "@/models/Store";
 import Product from "@/models/Product";
 import { authOptions } from "@/libs/next-auth";
+import { createStoreForUser } from "@/libs/userUtils";
 
 export async function GET(request, { params }) {
   const { userId } = params;
@@ -24,11 +25,12 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const store = await Store.findOne({ user_id: userId }).lean();
+    let store = await Store.findOne({ user_id: userId }).lean();
     if (!store) {
-      return NextResponse.json({ error: "Store not found" }, { status: 404 });
+      store = await createStoreForUser(userId, user.name);
     }
 
+    console.log("Store created:", store);
     const products = await Product.find({ store_id: store._id }).lean();
 
     return NextResponse.json({ user, store, products }, { status: 200 });
