@@ -43,6 +43,18 @@ const userSchema = mongoose.Schema(
   }
 );
 
+// Add pre-save hook to check if the associated account exists
+userSchema.pre('save', async function(next) {
+  if (this.isNew && this.account) {
+    const Account = mongoose.model('Account');
+    const accountExists = await Account.exists({ _id: this.account });
+    if (!accountExists) {
+      next(new Error('Associated account does not exist'));
+    }
+  }
+  next();
+});
+
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);
 

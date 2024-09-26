@@ -1,0 +1,24 @@
+meta {
+  name: Get Products
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/products/{{userId}}
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:3000
+  userId: 66f31b17049a5ad0cdd0186d
+  authToken: // Add your auth token here
+}

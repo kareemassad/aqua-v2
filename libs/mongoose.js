@@ -1,18 +1,21 @@
 import mongoose from "mongoose";
-import User from "@/models/User";
 
 const connectMongo = async () => {
   if (!process.env.MONGODB_URI) {
     throw new Error(
-      "Add the MONGODB_URI environment variable inside .env.local to use mongoose"
+      "MONGODB_URI is not defined. Please check your .env.local file and ensure it contains a valid MONGODB_URI."
     );
   }
-  return mongoose
-    .connect(process.env.MONGODB_URI, {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    })
-    .catch((e) => console.error("Mongoose Client Error: " + e.message));
+    });
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("Mongoose Client Error:", error);
+    throw error;
+  }
 };
 
-export default connectMongo;
+export { connectMongo, mongoose };
