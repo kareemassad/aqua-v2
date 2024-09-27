@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import connectMongo from "@/libs/mongoose";
-import SharedList from "@/models/SharedList";
+import Collection from "@/models/Collection";
 import { authOptions } from "@/libs/next-auth";
 import { v4 as uuidv4 } from "uuid";
 import Store from "@/models/Store";
@@ -61,7 +61,7 @@ export async function POST(request) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const newSharedList = await SharedList.create({
+    const newCollection = await Collection.create({
       store_id,
       name: validator.escape(name),
       unique_link,
@@ -69,7 +69,7 @@ export async function POST(request) {
       password: hashedPassword, // Store hashed password
     });
 
-    return NextResponse.json(newSharedList, { status: 201 });
+    return NextResponse.json(newCollection, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

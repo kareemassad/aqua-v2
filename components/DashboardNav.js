@@ -10,7 +10,7 @@ const navItems = [
   { href: '/dashboard/products', label: 'Products', icon: Package },
   { href: '/dashboard/generate-link', label: 'Share', icon: Share2 },
   { href: '/dashboard/orders', label: 'Orders', icon: ShoppingCart },
-  { href: '/dashboard/settings', label: 'Account', icon: User },
+  { href: '/dashboard/account', label: 'Account', icon: User },
 ];
 
 export default function DashboardNav() {

@@ -1,5 +1,5 @@
-import SharedListPage from "@/components/SharedListPage";
+import CollectionPage from "@/components/CollectionPage";
 
-export default function SharedListPageWrapper() {
-  return <SharedListPage />;
+export default function CollectionPageWrapper() {
+  return <CollectionPage />;
 }

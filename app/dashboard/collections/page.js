@@ -3,27 +3,27 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const SharedListsPage = () => {
-    const [sharedLists, setSharedLists] = useState([]);
+const CollectionsPage = () => {
+    const [collections, setCollections] = useState([]);
 
-    const fetchSharedLists = async () => {
+    const fetchCollections = async () => {
         try {
             const response = await axios.get('/api/shared-lists');
-            setSharedLists(response.data.sharedLists);
+            setCollections(response.data.collections);
         } catch (error) {
             console.error('Error fetching shared lists:', error);
         }
     };
 
     useEffect(() => {
-        fetchSharedLists();
+        fetchCollections();
     }, []);
 
     return (
         <div>
             <h1>Shared Lists</h1>
             <ul>
-                {sharedLists.map(list => (
+                {collections.map(list => (
                     <li key={list.id}>
                         {list.name} - <a href={`/shared-lists/${list.unique_link}`}>View</a>
                     </li>
@@ -33,4 +33,4 @@ const SharedListsPage = () => {
     );
 };
 
-export default SharedListsPage;
+export default CollectionsPage;
