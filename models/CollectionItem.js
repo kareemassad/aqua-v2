@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 
 // SHARED LIST ITEM SCHEMA
-const sharedListItemSchema = mongoose.Schema(
+const collectionItemSchema = mongoose.Schema(
   {
-    shared_list_id: {
+    collection_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "SharedList",
+      ref: "Collection",
       required: true,
     },
     product_id: {
@@ -27,6 +27,6 @@ const sharedListItemSchema = mongoose.Schema(
 );
 
 // Add plugin that converts mongoose to json
-sharedListItemSchema.plugin(toJSON);
+collectionItemSchema.plugin(toJSON);
 
-export default mongoose.models.SharedListItem || mongoose.model("SharedListItem", sharedListItemSchema);
+export default mongoose.models.CollectionItem || mongoose.model("CollectionItem", collectionItemSchema);

@@ -1,11 +1,11 @@
-import SharedList from '@/models/SharedList';
+import Collection from '@/models/Collection';
 import connectDB from '@/libs/mongoose';
 
 export async function GET(request) {
     try {
         await connectDB();
-        const sharedLists = await SharedList.find().populate('store_id');
-        return new Response(JSON.stringify({ sharedLists }), {
+        const collections = await Collection.find().populate('store_id');
+        return new Response(JSON.stringify({ collections }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });
@@ -21,9 +21,9 @@ export async function POST(request) {
     try {
         await connectDB();
         const data = await request.json();
-        const newSharedList = new SharedList(data);
-        await newSharedList.save();
-        return new Response(JSON.stringify(newSharedList), {
+        const newCollection = new Collection(data);
+        await newCollection.save();
+        return new Response(JSON.stringify(newCollection), {
             status: 201,
             headers: { 'Content-Type': 'application/json' },
         });

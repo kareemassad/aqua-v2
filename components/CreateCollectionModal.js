@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export default function CreateSharedListModal({ isOpen, onClose, selectedProducts, storeId }) {
+export default function CreateCollectionModal({ isOpen, onClose, selectedProducts, storeId }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,19 +17,19 @@ export default function CreateSharedListModal({ isOpen, onClose, selectedProduct
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post("/api/shared-lists/create", {
+      const response = await axios.post("/api/collections/create", {
         store_id: storeId,
         name,
         password,
         // Optionally, include expiration_date or other fields
       });
 
-      const sharedListId = response.data._id;
+      const CollectionId = response.data._id;
 
       // Add selected products to the shared list
       await Promise.all(selectedProducts.map(productId =>
-        axios.post("/api/shared-lists/items/create", {
-          shared_list_id: sharedListId,
+        axios.post("/api/collections/items/create", {
+          collection_id: CollectionId,
           product_id: productId,
           custom_price: 0, // Example: Set a default custom_price or collect from user
         })

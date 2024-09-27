@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
 import Image from "next/image"; // Added missing import
 
-export default function SharedListPage() {
+export default function CollectionPage() {
   const params = useParams();
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,7 +16,7 @@ export default function SharedListPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`/api/shared-lists/${params.unique_link}/validate`, { password });
+      const response = await axios.post(`/api/collections/${params.unique_link}/validate`, { password });
       if (response.status === 200) {
         setIsAuthenticated(true);
         setProducts(response.data.products);

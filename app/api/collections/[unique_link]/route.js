@@ -5,8 +5,8 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-const SharedList = require('../../../models/SharedList');
-const SharedListItem = require('../../../models/SharedListItem');
+const Collection = require('../../../models/Collection');
+const CollectionItem = require('../../../models/CollectionItem');
 
 const SharedProducts = () => {
   const params = useParams();
@@ -15,7 +15,7 @@ const SharedProducts = () => {
 
   const fetchSharedProducts = async () => {
     try {
-      const response = await axios.get(`/api/shared-lists/${params.unique_link}`);
+      const response = await axios.get(`/api/collections/${params.unique_link}`);
       setProducts(response.data.products);
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to fetch shared products");

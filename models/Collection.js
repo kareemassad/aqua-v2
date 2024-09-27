@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-const SharedListSchema = new mongoose.Schema(
+const CollectionSchema = new mongoose.Schema(
   {
     store_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', required: true },
     name: { type: String, required: true },
@@ -14,7 +14,7 @@ const SharedListSchema = new mongoose.Schema(
 );
 
 // Hash password before saving
-SharedListSchema.pre('save', async function(next) {
+CollectionSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   try {
     const salt = await bcrypt.genSalt(10);
@@ -26,8 +26,8 @@ SharedListSchema.pre('save', async function(next) {
 });
 
 // Method to compare password
-SharedListSchema.methods.comparePassword = async function(candidatePassword) {
+CollectionSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.models.SharedList || mongoose.model('SharedList', SharedListSchema);
+export default mongoose.models.Collection || mongoose.model('Collection', CollectionSchema);
