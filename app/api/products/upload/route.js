@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/libs/next-auth";
-import connectMongo from "@/libs/mongoose";
+import { authOptions } from "@/lib/next-auth";
+import connectMongo from "@/lib/mongoose";
 import Store from "@/models/Store";
 import Product from "@/models/Product";
 import ExcelJS from 'exceljs';

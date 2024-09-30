@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import connectMongo from "@/libs/mongoose";
+import connectMongo from "@/lib/mongoose";
 import Store from "@/models/Store";
-import { authOptions } from "@/libs/next-auth";
+import { authOptions } from "@/lib/next-auth";
 import validator from "validator";
 
 export async function POST(request) {

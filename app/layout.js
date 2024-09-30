@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import PlausibleProvider from "next-plausible";
-import { getSEOTags } from "@/libs/seo";
+import { getSEOTags } from "@/lib/seo";
 import config from "@/config";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout"; // We'll create this

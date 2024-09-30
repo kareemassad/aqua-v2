@@ -1,7 +1,7 @@
 // app/api/uploadthing/core.js
 import { createUploadthing } from "uploadthing/next";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/libs/next-auth";
+import { authOptions } from "@/lib/next-auth";
 
 const f = createUploadthing();
 

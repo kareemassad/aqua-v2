@@ -1,5 +1,5 @@
 import Payment from '@/models/Payment';
-import connectDB from '@/libs/mongoose';
+import connectDB from '@/lib/mongoose';
 
 export async function GET(request) {
     try {

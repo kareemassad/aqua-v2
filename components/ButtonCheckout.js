@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import apiClient from "@/libs/api";
+import apiClient from "@/lib/api";
 import config from "@/config";
 import { Button } from "@/components/ui/button";
 

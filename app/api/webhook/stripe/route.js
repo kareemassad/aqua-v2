@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import connectMongo from "@/libs/mongoose";
+import connectMongo from "@/lib/mongoose";
 import configFile from "@/config";
 import User from "@/models/User";
-import { findCheckoutSession } from "@/libs/stripe";
+import { findCheckoutSession } from "@/lib/stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;

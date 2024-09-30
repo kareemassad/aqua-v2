@@ -2,12 +2,12 @@
 
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import connectMongo from "@/libs/mongoose";
+import connectMongo from "@/lib/mongoose";
 import User from "@/models/User";
 import Store from "@/models/Store";
 import Product from "@/models/Product";
-import { authOptions } from "@/libs/next-auth";
-import { createStoreForUser } from "@/libs/userUtils";
+import { authOptions } from "@/lib/next-auth";
+import { createStoreForUser } from "@/lib/userUtils";
 
 export async function GET(request, { params }) {
   const { userId } = params;

@@ -1,5 +1,5 @@
 import Product from '@/models/Product';
-import connectDB from '@/libs/mongoose';
+import connectDB from '@/lib/mongoose';
 
 export async function GET(request, { params }) {
     const { storeId } = params;

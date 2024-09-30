@@ -1,5 +1,5 @@
 import Store from '@/models/Store';
-import connectMongo from '@/libs/mongoose';
+import connectMongo from '@/lib/mongoose';
 
 export async function GET(request) {
     try {

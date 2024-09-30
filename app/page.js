@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
-      <Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
         <Header />
       </Suspense>
       <main>
