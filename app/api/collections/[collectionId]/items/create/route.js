@@ -7,6 +7,7 @@ import Collection from "@/models/Collection";
 import Product from "@/models/Product";
 import CollectionItem from "@/models/CollectionItem";
 import { authOptions } from "@/lib/next-auth";
+import Store from "@/models/Store";
 
 export async function POST(request, { params }) {
   const { collectionId } = params;
@@ -42,7 +43,16 @@ export async function POST(request, { params }) {
   try {
     await connectMongo();
 
-    // Verify that the collection belongs to the user
+    // Fetch the user's store
+    const store = await Store.findOne({ user_id: session.user.id });
+    if (!store) {
+      return NextResponse.json(
+        { error: "User's store not found" },
+        { status: 404 }
+      );
+    }
+
+    // Verify that the collection belongs to the user's store
     const collection = await Collection.findById(collectionId);
     console.log("Found collection:", collection);
 
@@ -54,10 +64,10 @@ export async function POST(request, { params }) {
       );
     }
 
-    if (collection.store_id.toString() !== session.user.storeId) {
-      console.error("Unauthorized: Collection store_id does not match user's storeId");
+    if (collection.store_id.toString() !== store._id.toString()) {
+      console.error("Unauthorized: Collection store_id does not match user's store");
       console.log("Collection store_id:", collection.store_id.toString());
-      console.log("User storeId:", session.user.storeId);
+      console.log("User's store ID:", store._id.toString());
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }
@@ -65,7 +75,7 @@ export async function POST(request, { params }) {
     }
 
     // Verify that the product exists and belongs to the store
-    const product = await Product.findOne({ _id: product_id, store_id: collection.store_id }).exec();
+    const product = await Product.findOne({ _id: product_id, store_id: store._id }).exec();
     if (!product) {
       return NextResponse.json(
         { error: "Product not found in the specified store" },

@@ -5,6 +5,9 @@ import connectMongo from '@/lib/mongoose';
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/next-auth";
+import Store from '@/models/Store';
+import Product from '@/models/Product';
+import CollectionItem from '@/models/CollectionItem';
 
 export async function GET(request) {
     const session = await getServerSession(authOptions);
@@ -16,11 +19,36 @@ export async function GET(request) {
     try {
         await connectMongo();
 
-        const collections = await Collection.find({ store_id: session.user.storeId })
-            .populate('products') // Ensure products are populated
+        // Fetch the store associated with the user
+        const store = await Store.findOne({ user_id: session.user.id });
+
+        if (!store) {
+            return NextResponse.json(
+                { error: "User's store not found. Please set up your store first." },
+                { status: 400 }
+            );
+        }
+
+        const collections = await Collection.find({ store_id: store._id })
+            .populate({
+                path: 'products',
+                populate: {
+                    path: 'product_id',
+                    model: Product
+                }
+            })
             .exec();
 
-        return NextResponse.json({ collections }, { status: 200 });
+        // Add this block to count products for each collection
+        const collectionsWithProductCount = await Promise.all(collections.map(async (collection) => {
+            const productCount = await CollectionItem.countDocuments({ collection_id: collection._id });
+            return {
+                ...collection.toObject(),
+                productCount
+            };
+        }));
+
+        return NextResponse.json({ collections: collectionsWithProductCount }, { status: 200 });
     } catch (error) {
         console.error("Error fetching collections:", error);
         return NextResponse.json(
@@ -41,17 +69,6 @@ export async function POST(request) {
     console.log("Session:", JSON.stringify(session, null, 2));
 
     const { name, password } = await request.json();
-    const store_id = session.user.storeId;
-
-    console.log("Creating collection:", { store_id, name, password: "***" });
-
-    if (!store_id) {
-        console.error("Missing store_id in session");
-        return NextResponse.json(
-            { error: "User's store not found. Please set up your store first." },
-            { status: 400 }
-        );
-    }
 
     if (!name || !password) {
         console.error("Missing required fields:", { name, password: password ? "provided" : "missing" });
@@ -64,10 +81,21 @@ export async function POST(request) {
     try {
         await connectMongo();
 
+        // Fetch the store associated with the user
+        const store = await Store.findOne({ user_id: session.user.id });
+
+        if (!store) {
+            console.error("Store not found for user");
+            return NextResponse.json(
+                { error: "User's store not found. Please set up your store first." },
+                { status: 400 }
+            );
+        }
+
         const newCollection = await Collection.create({
-            store_id,
+            store_id: store._id,
             name,
-            unique_link: Math.random().toString(36).substring(2, 15),
+            unique_share_url: Math.random().toString(36).substring(2, 15),
             password,
         });
 

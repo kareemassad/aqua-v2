@@ -5,7 +5,7 @@ const CollectionSchema = new mongoose.Schema(
   {
     store_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', required: true },
     name: { type: String, required: true },
-    unique_link: { type: String, required: true, unique: true },
+    unique_share_url: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     expiration_date: { type: Date },
