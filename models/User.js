@@ -13,6 +13,8 @@ const userSchema = mongoose.Schema(
       trim: true,
       lowercase: true,
       private: true,
+      required: true,
+      unique: true,
     },
     image: {
       type: String,
@@ -36,6 +38,8 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    storeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
+    stripeId: { type: String }, // New Field for Stripe's profile.sub
   },
   {
     timestamps: true,
@@ -58,4 +62,4 @@ userSchema.pre('save', async function(next) {
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);
 
-export default mongoose.models.User || mongoose.model("User", userSchema);
+export default mongoose.models.User || mongoose.model('User', userSchema);

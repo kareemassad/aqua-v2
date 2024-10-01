@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 const CollectionSchema = new mongoose.Schema(
   {
-    store_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', required: true },
+    store_id: { type: String, required: true },
     name: { type: String, required: true },
     unique_link: { type: String, required: true, unique: true },
     password: { type: String, required: true },
