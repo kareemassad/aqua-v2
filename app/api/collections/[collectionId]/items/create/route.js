@@ -43,16 +43,7 @@ export async function POST(request, { params }) {
   try {
     await connectMongo();
 
-    // Fetch the user's store
-    const store = await Store.findOne({ user_id: session.user.id });
-    if (!store) {
-      return NextResponse.json(
-        { error: "User's store not found" },
-        { status: 404 }
-      );
-    }
-
-    // Verify that the collection belongs to the user's store
+    // Verify that the collection belongs to the user
     const collection = await Collection.findById(collectionId);
     console.log("Found collection:", collection);
 
@@ -64,10 +55,21 @@ export async function POST(request, { params }) {
       );
     }
 
+    // Fetch the store for the user
+    const store = await Store.findOne({ user_id: session.user.id });
+
+    if (!store) {
+      console.error("Store not found for user:", session.user.id);
+      return NextResponse.json(
+        { error: "User's store not found" },
+        { status: 404 }
+      );
+    }
+
     if (collection.store_id.toString() !== store._id.toString()) {
       console.error("Unauthorized: Collection store_id does not match user's store");
       console.log("Collection store_id:", collection.store_id.toString());
-      console.log("User's store ID:", store._id.toString());
+      console.log("User's store _id:", store._id.toString());
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }
@@ -75,7 +77,7 @@ export async function POST(request, { params }) {
     }
 
     // Verify that the product exists and belongs to the store
-    const product = await Product.findOne({ _id: product_id, store_id: store._id }).exec();
+    const product = await Product.findOne({ _id: product_id, store_id: collection.store_id }).exec();
     if (!product) {
       return NextResponse.json(
         { error: "Product not found in the specified store" },
