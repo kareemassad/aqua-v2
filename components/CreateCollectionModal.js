@@ -1,86 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function CreateCollectionModal({ isOpen, onClose, selectedProducts, storeId }) {
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreate = async () => {
-    if (!name || !password) {
-      toast.error("Name and password are required");
+    if (!name) {
+      toast.error("Collection name is required");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post("/api/collections/create", {
+      const response = await axios.post("/api/collections", {
         store_id: storeId,
         name,
-        password,
-        // Optionally, include expiration_date or other fields
       });
 
-      const CollectionId = response.data._id;
+      const collectionId = response.data._id;
 
-      // Add selected products to the shared list
+      // Add selected products to the collection
       await Promise.all(selectedProducts.map(productId =>
-        axios.post("/api/collections/items/create", {
-          collection_id: CollectionId,
-          product_id: productId,
-          custom_price: 0, // Example: Set a default custom_price or collect from user
+        axios.post(`/api/collections/${collectionId}/items/create`, {
+          product_id: productId
         })
       ));
 
-      toast.success("Shared list created successfully");
+      toast.success("Collection created successfully");
       onClose();
     } catch (error) {
-      console.error("Failed to create shared list:", error);
-      toast.error(error.response?.data?.error || "Failed to create shared list");
+      console.error("Failed to create collection:", error);
+      toast.error(error.response?.data?.error || "Failed to create collection");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-lg w-96">
-        <h2 className="text-xl font-semibold mb-4">Create Shared List</h2>
-        <input
-          type="text"
-          placeholder="List Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-2 border rounded mb-4"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded mb-4"
-          required
-        />
-        <button
-          onClick={handleCreate}
-          className="w-full p-2 bg-indigo-500 text-white rounded mb-2"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating..." : "Create"}
-        </button>
-        <button
-          onClick={onClose}
-          className="w-full p-2 bg-gray-300 rounded"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create New Collection</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <Input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Collection Name"
+            required
+          />
+        </div>
+        <Button onClick={handleCreate} disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Collection"}
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }

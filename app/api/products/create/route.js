@@ -9,7 +9,12 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request) {
   const session = await getServerSession(authOptions);
+
+  // Log the session data
+  console.log("Session Data:", session);
+
   if (!session) {
+    console.error("Unauthorized: No valid session");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -96,10 +101,9 @@ export async function POST(request) {
     }
 
     // Ensure store exists and belongs to the user
-    const store = await Store.findOne({
-      _id: store_id,
-      user_id: session.user.id,
-    });
+    console.log("Searching for store with user_id:", session.user.id);
+    const store = await Store.findOne({ user_id: session.user.id });
+    console.log("Store lookup result:", store);
 
     if (!store) {
       console.warn("Store not found or unauthorized");
