@@ -28,15 +28,15 @@ export async function POST(request, { params }) {
       );
     }
 
-    const safeLink = uuidv4();
-    collection.safe_link = safeLink;
+    const uniqueLink = uuidv4();
+    collection.unique_link = uniqueLink;
     await collection.save();
 
-    return NextResponse.json({ safeLink }, { status: 200 });
+    return NextResponse.json({ uniqueLink }, { status: 200 });
   } catch (error) {
-    console.error("Error generating safe link:", error);
+    console.error("Error generating unique link:", error);
     return NextResponse.json(
-      { error: "Failed to generate safe link" },
+      { error: "Failed to generate unique link" },
       { status: 500 }
     );
   }

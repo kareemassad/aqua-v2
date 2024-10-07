@@ -13,12 +13,7 @@ const collectionItemSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
       required: true,
-    },
-    custom_price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+    }
   },
   {
     timestamps: true,

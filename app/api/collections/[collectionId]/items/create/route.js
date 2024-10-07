@@ -1,115 +1,65 @@
-// //  handles POST create item in collection
-// TODO, DELETE AS PRODUCT CREATION IS NOW DONE IN collections/route.js
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import connectMongo from "@/lib/mongoose";
 import Collection from "@/models/Collection";
 import Product from "@/models/Product";
-import CollectionItem from "@/models/CollectionItem";
-import { authOptions } from "@/lib/next-auth";
 import Store from "@/models/Store";
+import { authOptions } from "@/lib/next-auth";
 
 export async function POST(request, { params }) {
-  const { collectionId } = params;
-  const session = await getServerSession(authOptions);
+	const { collectionId } = params;
+	const session = await getServerSession(authOptions);
 
-  if (!session) {
-    console.error("Unauthorized: No valid session");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+	console.log("Session:", JSON.stringify(session, null, 2));
 
-  console.log("Session user:", session.user);
-  console.log("Collection ID:", collectionId);
+	if (!session) {
+		console.log("Unauthorized access attempt");
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	}
 
-  const { product_id, custom_price } = await request.json();
-  console.log("Received payload:", { product_id, custom_price });
+	try {
+		await connectMongo();
+		console.log("Connected to MongoDB");
 
-  if (!product_id || custom_price == null) {
-    console.error("Missing required fields:", { product_id, custom_price });
-    return NextResponse.json(
-      { error: "Product ID and Custom Price are required" },
-      { status: 400 }
-    );
-  }
+		const { product_id } = await request.json();
+		console.log("Received product_id:", product_id);
 
-  // Validate custom_price is a positive number
-  if (typeof custom_price !== 'number' || custom_price < 0) {
-    return NextResponse.json(
-      { error: "Custom Price must be a positive number" },
-      { status: 400 }
-    );
-  }
+		const collection = await Collection.findById(collectionId);
+		console.log("Found collection:", collection);
 
-  try {
-    await connectMongo();
+		if (!collection) {
+			console.log("Collection not found");
+			return NextResponse.json({ error: "Collection not found", status: "error" }, { status: 404 });
+		}
 
-    // Verify that the collection belongs to the user
-    const collection = await Collection.findById(collectionId);
-    console.log("Found collection:", collection);
+		const store = await Store.findById(collection.store_id);
+		console.log("Found store:", store);
 
-    if (!collection) {
-      console.error("Collection not found:", collectionId);
-      return NextResponse.json(
-        { error: "Collection not found" },
-        { status: 404 }
-      );
-    }
+		if (store.user_id.toString() !== session.user.id) {
+			console.log("Unauthorized: User does not own this store");
+			return NextResponse.json({ error: "Unauthorized", status: "error" }, { status: 403 });
+		}
 
-    // Fetch the store for the user
-    const store = await Store.findOne({ user_id: session.user.id });
+		const product = await Product.findById(product_id);
+		console.log("Found product:", product);
 
-    if (!store) {
-      console.error("Store not found for user:", session.user.id);
-      return NextResponse.json(
-        { error: "User's store not found" },
-        { status: 404 }
-      );
-    }
+		if (!product) {
+			console.log("Product not found");
+			return NextResponse.json({ error: "Product not found", status: "error" }, { status: 404 });
+		}
 
-    if (collection.store_id.toString() !== store._id.toString()) {
-      console.error("Unauthorized: Collection store_id does not match user's store");
-      console.log("Collection store_id:", collection.store_id.toString());
-      console.log("User's store _id:", store._id.toString());
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 403 }
-      );
-    }
+		if (collection.products.includes(product_id)) {
+			console.log("Product already in collection");
+			return NextResponse.json({ status: "duplicate", message: "Product already in collection" }, { status: 200 });
+		}
 
-    // Verify that the product exists and belongs to the store
-    const product = await Product.findOne({ _id: product_id, store_id: collection.store_id }).exec();
-    if (!product) {
-      return NextResponse.json(
-        { error: "Product not found in the specified store" },
-        { status: 404 }
-      );
-    }
+		collection.products.push(product_id);
+		await collection.save();
+		console.log("Product added to collection");
 
-    // Check for duplicate CollectionItem
-    const existingItem = await CollectionItem.findOne({
-      collection_id: collectionId,
-      product_id,
-    }).exec();
-
-    if (existingItem) {
-      return NextResponse.json(
-        { error: "Product is already in the collection" },
-        { status: 400 }
-      );
-    }
-
-    const newCollectionItem = await CollectionItem.create({
-      collection_id: collectionId,
-      product_id,
-      custom_price,
-    });
-
-    return NextResponse.json(newCollectionItem, { status: 201 });
-  } catch (error) {
-    console.error("Error creating collection item:", error);
-    return NextResponse.json(
-      { error: "Failed to create collection item", details: error.message },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ status: "added", message: "Product added to collection" }, { status: 200 });
+	} catch (error) {
+		console.error("Error adding product to collection:", error);
+		return NextResponse.json({ status: "error", message: "Failed to add product to collection", details: error.message }, { status: 500 });
+	}
 }

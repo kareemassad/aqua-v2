@@ -1,54 +1,55 @@
 'use client';
 
 import { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function CreateCollectionForm() {
   const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name) {
+      toast.error("Collection name is required");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const response = await fetch('/api/collections', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, password }),
+      const response = await axios.post('/api/collections', {
+        name,
       });
 
-      if (response.ok) {
-        // Reset form and maybe trigger a refresh of the collection list
+      if (response.status === 201) {
+        toast.success("Collection created successfully!");
         setName('');
-        setPassword('');
-        alert('Collection created successfully!');
+        // Optionally, refresh collection list or perform other actions
       } else {
-        const data = await response.json();
-        alert(`Failed to create collection: ${data.error}`);
+        toast.error("Failed to create collection");
       }
     } catch (error) {
       console.error('Error creating collection:', error);
-      alert('An error occurred while creating the collection');
+      toast.error(error.response?.data?.error || "An error occurred while creating the collection");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <Input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Collection Name"
         required
       />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Create Collection</button>
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Creating..." : "Create Collection"}
+      </Button>
     </form>
   );
 }

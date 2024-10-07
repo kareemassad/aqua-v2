@@ -6,12 +6,16 @@ import { toast } from "react-toastify";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function SelectCollectionModal({ isOpen, onClose, selectedProducts, storeId }) {
+export default function SelectCollectionModal({ isOpen, onClose, selectedProducts, onProductsAdded }) {
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [newCollectionName, setNewCollectionName] = useState("");
-  const [newCollectionPassword, setNewCollectionPassword] = useState("");
+  const [activeTab, setActiveTab] = useState("existing");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -21,95 +25,134 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
 
   const fetchCollections = async () => {
     try {
-      const response = await axios.get('/api/collections');
-      setCollections(response.data.collections);
+      const response = await axios.get("/api/collections");
+      setCollections(response.data.collections || []);
     } catch (error) {
       console.error("Error fetching collections:", error);
-      toast.error('Error fetching collections.');
+      setError("Failed to fetch collections. Please try again.");
     }
   };
 
+  const validateNewCollectionName = () => {
+    if (!newCollectionName.trim()) {
+      setError("Collection name cannot be empty");
+      return false;
+    }
+    if (collections.some(collection => collection.name.toLowerCase() === newCollectionName.trim().toLowerCase())) {
+      setError("A collection with this name already exists");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
   const handleAddToCollection = async () => {
-    if (!selectedCollection && !newCollectionName) {
-      toast.error("Please select an existing collection or enter a new collection name.");
+    if (activeTab === "existing" && !selectedCollection) {
+      setError("Please select a collection");
       return;
     }
 
-    if (newCollectionName && !newCollectionPassword) {
-      toast.error("Please enter a password for the new collection.");
+    if (activeTab === "new" && !newCollectionName.trim()) {
+      setError("Please enter a name for the new collection");
       return;
     }
+
+    setIsLoading(true);
+    setError("");
 
     try {
       let collectionId = selectedCollection;
 
-      // If creating a new collection
-      if (newCollectionName) {
-        const createResponse = await axios.post('/api/collections', {
-          store_id: storeId, // Ensure storeId is passed
-          name: newCollectionName,
-          password: newCollectionPassword,
-        });
-        collectionId = createResponse.data._id;
+      if (activeTab === "new") {
+        const newCollectionResponse = await axios.post("/api/collections", { name: newCollectionName.trim() });
+        collectionId = newCollectionResponse.data._id;
       }
 
-      // Add selected products to the collection
-      await Promise.all(selectedProducts.map(productId =>
+      const promises = selectedProducts.map(productId => 
         axios.post(`/api/collections/${collectionId}/items/create`, {
-          product_id: productId,
-          custom_price: 0, // Adjust as needed
+          product_id: productId
         })
-      ));
+      );
+      const results = await Promise.all(promises);
+      const responses = results.map(r => r.data);
+      
+      const added = responses.filter(r => r.status === "added").length;
+      const duplicates = responses.filter(r => r.status === "duplicate").length;
 
-      toast.success("Products added to the collection successfully.");
+      if (added > 0 && duplicates > 0) {
+        toast.success(`Added ${added} product(s) to the collection. ${duplicates} product(s) were already in the collection.`);
+      } else if (added > 0) {
+        toast.success(`Added ${added} product(s) to the collection.`);
+      } else if (duplicates === selectedProducts.length) {
+        toast.warning(`No products added as all ${duplicates} product(s) were already in the collection.`);
+      } else {
+        toast.error("No products were added to the collection.");
+      }
+      
+      onProductsAdded();
       onClose();
     } catch (error) {
       console.error("Error adding products to collection:", error);
-      toast.error(error.response?.data?.error || "Failed to add products to collection.");
+      toast.error("An error occurred while adding products to the collection.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) {
+        onClose();
+        setError("");
+        setNewCollectionName("");
+        setSelectedCollection("");
+      }
+    }}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Select or Create a Collection</DialogTitle>
+          <DialogTitle>Add Products to Collection</DialogTitle>
+          <DialogDescription>
+            Select an existing collection or create a new one to add the selected products.
+          </DialogDescription>
         </DialogHeader>
-        <DialogDescription>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium">Choose an existing collection</label>
-              <select
-                value={selectedCollection}
-                onChange={(e) => setSelectedCollection(e.target.value)}
-                className="mt-1 block w-full p-2 border rounded"
-              >
-                <option value="">-- Select a Collection --</option>
-                {collections.map(collection => (
-                  <option key={collection._id} value={collection._id}>{collection.name}</option>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="existing">Existing Collection</TabsTrigger>
+            <TabsTrigger value="new">New Collection</TabsTrigger>
+          </TabsList>
+          <TabsContent value="existing">
+            <Select value={selectedCollection} onValueChange={setSelectedCollection}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a collection" />
+              </SelectTrigger>
+              <SelectContent>
+                {collections.map((collection) => (
+                  <SelectItem key={collection._id} value={collection._id}>
+                    {collection.name}
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Or create a new collection</label>
-              <Input
-                placeholder="New Collection Name"
-                value={newCollectionName}
-                onChange={(e) => setNewCollectionName(e.target.value)}
-              />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={newCollectionPassword}
-                onChange={(e) => setNewCollectionPassword(e.target.value)}
-                className="mt-2"
-              />
-            </div>
-          </div>
-        </DialogDescription>
+              </SelectContent>
+            </Select>
+          </TabsContent>
+          <TabsContent value="new">
+            <Input
+              type="text"
+              placeholder="Enter new collection name"
+              value={newCollectionName}
+              onChange={(e) => {
+                setNewCollectionName(e.target.value);
+                setError("");
+              }}
+              onBlur={validateNewCollectionName}
+            />
+          </TabsContent>
+        </Tabs>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         <DialogFooter>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleAddToCollection}>Add to Collection</Button>
+          <Button onClick={handleAddToCollection} disabled={isLoading || !!error}>
+            {isLoading ? "Adding..." : "Add to Collection"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
