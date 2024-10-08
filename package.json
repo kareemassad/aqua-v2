@@ -26,6 +26,8 @@
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@uploadthing/react": "^7.0.2",
+    "ag-grid-community": "^32.2.2",
+    "ag-grid-react": "^32.2.2",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",

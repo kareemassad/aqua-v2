@@ -5,11 +5,12 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PencilIcon, CheckIcon, TrashIcon, Boxes, Plus } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import AddProductModal from "@/components/AddProductModal";
 import SelectCollectionModal from "@/components/SelectCollectionModal";
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 export default function ProductsPage() {
   const { data: session } = useSession();
@@ -50,7 +51,6 @@ export default function ProductsPage() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`/api/products?page=${currentPage}&limit=10&search=${searchTerm}`);
-      console.log('API response:', response.data);
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -72,9 +72,16 @@ export default function ProductsPage() {
     }
   };
 
+  const handleEdit = (productId) => {
+    const productToEdit = products.find(p => p._id === productId);
+    setEditingProduct(productToEdit);
+    setIsAddModalOpen(true); // Open the modal to edit the product
+  };
+
   const handleProductAdded = () => {
     fetchProducts();
     setIsAddModalOpen(false);
+    setEditingProduct(null); // Reset editing product
   };
 
   const handleSelectProduct = (productId) => {
@@ -93,39 +100,29 @@ export default function ProductsPage() {
     setIsSelectCollectionOpen(true);
   };
 
-  const handleEdit = (productId) => {
-    if (editingProduct === productId) {
-      // Save the changes
-      handleSaveEdit(productId);
-    } else {
-      setEditingProduct(productId);
+  const columnDefs = [
+    { headerName: "Select", checkboxSelection: true, width: 100 },
+    { headerName: "Image", field: "imageUrl", cellRenderer: params => params.value ? `<img src="${params.value}" style="width: 50px; height: 50px;"/>` : 'No Image', width: 100 },
+    { headerName: "Name", field: "name", editable: true },
+    { headerName: "Sell Price", field: "sell_price", valueFormatter: params => `$${params.value.toFixed(2)}`, editable: true },
+    { headerName: "Inventory", field: "inventory", editable: true },
+    {
+      headerName: "Actions",
+      cellRendererFramework: (params) => (
+        <div>
+          <Button onClick={() => handleEdit(params.data._id)}>Edit</Button>
+          <Button onClick={() => handleDelete(params.data._id)}>Delete</Button>
+        </div>
+      ),
+      width: 150
     }
-  };
-
-  const handleSaveEdit = async (productId) => {
-    try {
-      const productToUpdate = products.find(p => p._id === productId);
-      await axios.put(`/api/products/${productId}`, productToUpdate);
-      setEditingProduct(null);
-      toast.success('Product updated successfully');
-    } catch (error) {
-      console.error('Error updating product:', error);
-      toast.error('Error updating product');
-    }
-  };
-
-  const handleInputChange = (productId, field, value) => {
-    setProducts(products.map(p => 
-      p._id === productId ? { ...p, [field]: value } : p
-    ));
-  };
+  ];
 
   return (
     <div className="space-y-4 p-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Product Dashboard</h1>
         <Button onClick={() => setIsAddModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
           Add New Product
         </Button>
       </div>
@@ -143,100 +140,18 @@ export default function ProductsPage() {
           variant="outline"
           className="ml-4 flex items-center gap-2"
         >
-          <Boxes className="h-4 w-4" />
           Add to Collection
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>
-              <input
-                type="checkbox"
-                checked={selectedProducts.length === products.length && products.length > 0}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedProducts(products.map(product => product._id));
-                  } else {
-                    setSelectedProducts([]);
-                  }
-                }}
-              />
-            </TableHead>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Sell Price</TableHead>
-            <TableHead>Inventory</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {products.map((product) => (
-            <TableRow key={product._id}>
-              <TableCell>
-                <input
-                  type="checkbox"
-                  checked={selectedProducts.includes(product._id)}
-                  onChange={() => handleSelectProduct(product._id)}
-                />
-              </TableCell>
-              <TableCell>
-                {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded" />
-                ) : (
-                  <div className="h-12 w-12 bg-gray-300 flex items-center justify-center rounded">
-                    <span className="text-gray-700">No Image</span>
-                  </div>
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    value={product.name}
-                    onChange={(e) => handleInputChange(product._id, 'name', e.target.value)}
-                  />
-                ) : (
-                  product.name
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.sell_price}
-                    onChange={(e) => handleInputChange(product._id, 'sell_price', parseFloat(e.target.value))}
-                  />
-                ) : (
-                  `$${product.sell_price.toFixed(2)}`
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.inventory}
-                    onChange={(e) => handleInputChange(product._id, 'inventory', parseInt(e.target.value))}
-                  />
-                ) : (
-                  product.inventory
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(product._id)}>
-                    {editingProduct === product._id ? <CheckIcon className="h-4 w-4" /> : <PencilIcon className="h-4 w-4" />}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(product._id)}>
-                    <TrashIcon className="h-4 w-4 mr-1" />
-                    Delete
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
+        <AgGridReact
+          rowData={products}
+          columnDefs={columnDefs}
+          rowSelection="multiple"
+          onGridReady={params => params.api.sizeColumnsToFit()}
+        />
+      </div>
 
       {products.length === 0 && (
         <div className="text-center py-4 text-gray-500">
@@ -265,6 +180,7 @@ export default function ProductsPage() {
         onClose={() => setIsAddModalOpen(false)}
         onProductAdded={handleProductAdded}
         storeId={storeId}
+        product={editingProduct} // Pass the product to edit
       />
 
       <SelectCollectionModal

@@ -68,16 +68,12 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
         collectionId = newCollectionResponse.data._id;
       }
 
-      const promises = selectedProducts.map(productId => 
-        axios.post(`/api/collections/${collectionId}/items/create`, {
-          product_id: productId
-        })
-      );
-      const results = await Promise.all(promises);
-      const responses = results.map(r => r.data);
-      
-      const added = responses.filter(r => r.status === "added").length;
-      const duplicates = responses.filter(r => r.status === "duplicate").length;
+      // Use the new bulk add endpoint
+      const response = await axios.post(`/api/collections/${collectionId}/items/bulk-create`, {
+        product_ids: selectedProducts,
+      });
+
+      const { added, duplicates } = response.data;
 
       if (added > 0 && duplicates > 0) {
         toast.success(`Added ${added} product(s) to the collection. ${duplicates} product(s) were already in the collection.`);
@@ -88,7 +84,7 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
       } else {
         toast.error("No products were added to the collection.");
       }
-      
+
       onProductsAdded();
       onClose();
     } catch (error) {
@@ -99,15 +95,13 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
     }
   };
 
+  const handleClose = () => {
+    setSelectedCollection("");
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        onClose();
-        setError("");
-        setNewCollectionName("");
-        setSelectedCollection("");
-      }
-    }}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Products to Collection</DialogTitle>
