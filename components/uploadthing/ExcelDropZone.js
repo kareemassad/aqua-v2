@@ -1,26 +1,26 @@
 "use client";
 
-import { useDropzone } from "@uploadthing/react";
-import { generateClientDropzoneAccept } from "uploadthing/client";
-import { useCallback } from "react";
+import { UploadButton } from "@uploadthing/react";
+import { toast } from "react-toastify";
 
 export default function ExcelDropZone({ onUploadSuccess }) {
-  const onDrop = useCallback((acceptedFiles) => {
-    console.log(acceptedFiles);
-    if (onUploadSuccess) {
-      onUploadSuccess({ type: "excel", url: acceptedFiles[0].fileUrl });
-    }
-  }, [onUploadSuccess]);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: generateClientDropzoneAccept(["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]),
-  });
-
   return (
-    <div {...getRootProps()}>
-      <input {...getInputProps()} />
-      <p>Drag &apos;n&apos; drop an Excel file here, or click to select one</p>
-    </div>
+    <UploadButton
+      endpoint="excelUploader"
+      onClientUploadComplete={(res) => {
+        console.log("Upload completed:", res);
+        if (res && res[0] && res[0].serverData && res[0].serverData.parsedData) {
+          onUploadSuccess(res[0].serverData.parsedData);
+          toast.success("Excel file uploaded and parsed successfully!");
+        } else {
+          console.error("Unexpected response format:", res);
+          toast.error("Failed to parse the Excel file. Please check the file format.");
+        }
+      }}
+      onUploadError={(error) => {
+        console.error("Upload error:", error);
+        toast.error("Failed to upload the Excel file. Please try again.");
+      }}
+    />
   );
 }
