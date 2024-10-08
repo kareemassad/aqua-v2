@@ -10,6 +10,7 @@ import { PencilIcon, CheckIcon, TrashIcon, Boxes, Plus } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import AddProductModal from "@/components/AddProductModal";
 import SelectCollectionModal from "@/components/SelectCollectionModal";
+import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from '@tanstack/react-table';
 
 export default function ProductsPage() {
   const { data: session } = useSession();
@@ -21,7 +22,7 @@ export default function ProductsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [storeId, setStoreId] = useState(null);
   const [isSelectCollectionOpen, setIsSelectCollectionOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingProductId, setEditingProductId] = useState(null); // Track the editing product ID
 
   useEffect(() => {
     const fetchStoreId = async () => {
@@ -50,7 +51,6 @@ export default function ProductsPage() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`/api/products?page=${currentPage}&limit=10&search=${searchTerm}`);
-      console.log('API response:', response.data);
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -77,48 +77,145 @@ export default function ProductsPage() {
     setIsAddModalOpen(false);
   };
 
-  const handleSelectProduct = (productId) => {
-    setSelectedProducts((prevSelected) =>
-      prevSelected.includes(productId)
-        ? prevSelected.filter(id => id !== productId)
-        : [...prevSelected, productId]
-    );
-  };
-
   const handleAddToCollectionClick = () => {
     if (selectedProducts.length === 0) {
-      toast.error('Please select at least one product to add to a collection.');
+      toast.error("Please select at least one product to add to the collection.");
       return;
     }
     setIsSelectCollectionOpen(true);
   };
 
   const handleEdit = (productId) => {
-    if (editingProduct === productId) {
-      // Save the changes
-      handleSaveEdit(productId);
+    if (editingProductId === productId) {
+      setEditingProductId(null); // Save the changes and exit edit mode
     } else {
-      setEditingProduct(productId);
+      setEditingProductId(productId); // Enter edit mode
     }
   };
 
   const handleSaveEdit = async (productId) => {
+    const productToUpdate = products.find(p => p._id === productId);
+    
+    // Validate inputs
+    if (productToUpdate.cost_price < 0 || productToUpdate.sell_price < 0 || productToUpdate.inventory < 0) {
+      toast.error('Cost, Sell Price, and Inventory cannot be negative.');
+      return;
+    }
+
     try {
-      const productToUpdate = products.find(p => p._id === productId);
       await axios.put(`/api/products/${productId}`, productToUpdate);
-      setEditingProduct(null);
+      setEditingProductId(null); // Exit edit mode
       toast.success('Product updated successfully');
+      fetchProducts(); // Refresh the product list to reflect changes
     } catch (error) {
       console.error('Error updating product:', error);
       toast.error('Error updating product');
     }
   };
 
-  const handleInputChange = (productId, field, value) => {
-    setProducts(products.map(p => 
-      p._id === productId ? { ...p, [field]: value } : p
-    ));
-  };
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      cell: ({ row }) => (
+        editingProductId === row.original._id ? (
+          <Input
+            value={row.original.name}
+            onChange={(e) => {
+              const updatedProducts = products.map(product =>
+                product._id === row.original._id ? { ...product, name: e.target.value } : product
+              );
+              setProducts(updatedProducts);
+            }}
+          />
+        ) : (
+          row.original.name
+        )
+      ),
+    },
+    {
+      accessorKey: 'cost_price',
+      header: 'Cost Price',
+      cell: ({ row }) => (
+        editingProductId === row.original._id ? (
+          <Input
+            type="number"
+            value={row.original.cost_price}
+            onChange={(e) => {
+              const updatedProducts = products.map(product =>
+                product._id === row.original._id ? { ...product, cost_price: Math.max(0, parseFloat(e.target.value)) } : product
+              );
+              setProducts(updatedProducts);
+            }}
+          />
+        ) : (
+          `$${row.original.cost_price.toFixed(2)}`
+        )
+      ),
+    },
+    {
+      accessorKey: 'sell_price',
+      header: 'Sell Price',
+      cell: ({ row }) => (
+        editingProductId === row.original._id ? (
+          <Input
+            type="number"
+            value={row.original.sell_price}
+            onChange={(e) => {
+              const updatedProducts = products.map(product =>
+                product._id === row.original._id ? { ...product, sell_price: Math.max(0, parseFloat(e.target.value)) } : product
+              );
+              setProducts(updatedProducts);
+            }}
+          />
+        ) : (
+          `$${row.original.sell_price.toFixed(2)}`
+        )
+      ),
+    },
+    {
+      accessorKey: 'inventory',
+      header: 'Inventory',
+      cell: ({ row }) => (
+        editingProductId === row.original._id ? (
+          <Input
+            type="number"
+            value={row.original.inventory}
+            onChange={(e) => {
+              const updatedProducts = products.map(product =>
+                product._id === row.original._id ? { ...product, inventory: Math.max(0, parseInt(e.target.value)) } : product
+              );
+              setProducts(updatedProducts);
+            }}
+          />
+        ) : (
+          row.original.inventory
+        )
+      ),
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <div className="flex space-x-2">
+          <Button variant="ghost" size="sm" onClick={() => handleEdit(row.original._id)}>
+            {editingProductId === row.original._id ? <CheckIcon className="h-4 w-4" /> : <PencilIcon className="h-4 w-4" />}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleDelete(row.original._id)}>
+            <TrashIcon className="h-4 w-4 mr-1" />
+            Delete
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  const table = useReactTable({
+    data: products,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
   return (
     <div className="space-y-4 p-8">
@@ -150,89 +247,24 @@ export default function ProductsPage() {
 
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>
-              <input
-                type="checkbox"
-                checked={selectedProducts.length === products.length && products.length > 0}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedProducts(products.map(product => product._id));
-                  } else {
-                    setSelectedProducts([]);
-                  }
-                }}
-              />
-            </TableHead>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Sell Price</TableHead>
-            <TableHead>Inventory</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
+          {table.getHeaderGroups().map(headerGroup => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <TableHead key={header.id} colSpan={header.colSpan}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
         </TableHeader>
         <TableBody>
-          {products.map((product) => (
-            <TableRow key={product._id}>
-              <TableCell>
-                <input
-                  type="checkbox"
-                  checked={selectedProducts.includes(product._id)}
-                  onChange={() => handleSelectProduct(product._id)}
-                />
-              </TableCell>
-              <TableCell>
-                {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded" />
-                ) : (
-                  <div className="h-12 w-12 bg-gray-300 flex items-center justify-center rounded">
-                    <span className="text-gray-700">No Image</span>
-                  </div>
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    value={product.name}
-                    onChange={(e) => handleInputChange(product._id, 'name', e.target.value)}
-                  />
-                ) : (
-                  product.name
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.sell_price}
-                    onChange={(e) => handleInputChange(product._id, 'sell_price', parseFloat(e.target.value))}
-                  />
-                ) : (
-                  `$${product.sell_price.toFixed(2)}`
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.inventory}
-                    onChange={(e) => handleInputChange(product._id, 'inventory', parseInt(e.target.value))}
-                  />
-                ) : (
-                  product.inventory
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(product._id)}>
-                    {editingProduct === product._id ? <CheckIcon className="h-4 w-4" /> : <PencilIcon className="h-4 w-4" />}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(product._id)}>
-                    <TrashIcon className="h-4 w-4 mr-1" />
-                    Delete
-                  </Button>
-                </div>
-              </TableCell>
+          {table.getRowModel().rows.map(row => (
+            <TableRow key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <TableCell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>
