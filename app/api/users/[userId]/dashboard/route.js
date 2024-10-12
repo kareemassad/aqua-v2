@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import connectMongo from "@/lib/mongoose";
-import Product from "@/models/Product";
+import User from "@/models/User";
 
 export async function GET(request, { params }) {
-  await connectMongo();
   const { userId } = params;
+  await connectMongo();
 
   try {
-    const products = await Product.find({ user_id: userId });
-    return NextResponse.json(products);
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    return NextResponse.json(user);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -1,0 +1,30 @@
+meta {
+  name: Login User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "john@example.com",
+    "password": "securePassword123"
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:3000
+}
+
+script:post-response {
+  // Store the auth token for future requests
+  bru.setEnvVar("authToken", res.body.token);
+}

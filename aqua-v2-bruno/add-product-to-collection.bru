@@ -1,0 +1,32 @@
+meta {
+  name: Add Product to Collection
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/collections/{{collectionId}}/items/create
+  auth: bearer
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "product_id": "{{productId}}"
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:3000
+  collectionId: // Add the collection ID here
+  productId: // Add the product ID here
+  authToken: // Add your auth token here
+}

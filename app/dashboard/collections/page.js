@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +11,6 @@ import { Trash2, Link, Search, Plus, Edit } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Boxes } from 'lucide-react'
-import axios from 'axios'
 import { toast } from 'react-toastify'
 import SelectCollectionModal from "@/components/SelectCollectionModal"
 
@@ -81,8 +79,9 @@ export default function CollectionsPage() {
           body: JSON.stringify({ name: newName })
         });
         if (response.ok) {
+          const newCollection = await response.json();
+          setCollections(prevCollections => [newCollection, ...prevCollections]);
           toast.success('New collection created successfully');
-          await fetchCollections(); // Refresh the collections list
         } else {
           console.error('Failed to create collection:', await response.text());
           toast.error('Failed to create new collection');
@@ -161,6 +160,7 @@ export default function CollectionsPage() {
       toast.error("An error occurred while adding products to the collection.");
     }
   };
+
 
   const handleGenerateLink = async (collectionId) => {
     const response = await fetch(`/api/collections/${collectionId}/generate-link`, { method: 'POST' })

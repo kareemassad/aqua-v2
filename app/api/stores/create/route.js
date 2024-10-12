@@ -12,7 +12,7 @@ export async function POST(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, description, logo, contact_info } = await request.json();
+  const { name, description, logo, contact_info, premium } = await request.json();
 
   if (!name || !validator.isLength(name, { min: 3, max: 50 })) {
     return NextResponse.json({ error: "Valid store name is required" }, { status: 400 });
@@ -30,6 +30,7 @@ export async function POST(request) {
       name: validator.escape(name),
       description: validator.escape(description || ''),
       logo: validator.escape(logo || ''),
+      public: Boolean(premium),
       contact_info: {
         phone: contact_info.phone ? validator.escape(contact_info.phone) : '',
         email: contact_info.email && validator.isEmail(contact_info.email) ? validator.normalizeEmail(contact_info.email) : '',
