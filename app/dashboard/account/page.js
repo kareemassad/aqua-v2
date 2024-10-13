@@ -5,14 +5,14 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings } from 'lucide-react';
+import { Settings } from "lucide-react";
 import { toast } from "react-toastify";
 
 export default function AccountPage() {
   const { data: session, status } = useSession();
   const [user, setUser] = useState({
-    email: '',
-    storeName: '',
+    email: "",
+    storeName: "",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,22 +44,25 @@ export default function AccountPage() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
-      
+
       <div className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Store Name:</strong> {user.storeName}</p>
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Store Name:</strong> {user.storeName}
+            </p>
             <Button variant="outline" className="mt-4">
               <Settings className="mr-2 h-4 w-4" />
               Edit Profile
             </Button>
           </CardContent>
         </Card>
-
 
         <Card>
           <CardHeader>
@@ -69,9 +72,7 @@ export default function AccountPage() {
             <Button variant="outline" className="mb-2">
               View Billing History
             </Button>
-            <Button variant="outline">
-              Update Payment Method
-            </Button>
+            <Button variant="outline">Update Payment Method</Button>
           </CardContent>
         </Card>
       </div>

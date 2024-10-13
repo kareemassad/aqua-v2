@@ -9,13 +9,18 @@ const UniqueLinkSchema = new mongoose.Schema({
 
 const CollectionSchema = new mongoose.Schema(
   {
-    store_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', required: true },
+    store_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Store",
+      required: true,
+    },
     name: { type: String, required: true },
-    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     unique_link: { type: String, unique: true },
     uniqueLinks: [UniqueLinkSchema], // Added uniqueLinks array
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.models.Collection || mongoose.model('Collection', CollectionSchema);
+export default mongoose.models.Collection ||
+  mongoose.model("Collection", CollectionSchema);

@@ -52,6 +52,9 @@ export async function GET(request) {
     return NextResponse.json(dashboardData, { status: 200 });
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
-    return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error", details: error.message },
+      { status: 500 },
+    );
   }
 }

@@ -29,7 +29,7 @@ export async function GET(request) {
 
     const query = { store_id: store._id };
     if (search) {
-      query.name = { $regex: search, $options: 'i' };
+      query.name = { $regex: search, $options: "i" };
     }
 
     const totalProducts = await Product.countDocuments(query);
@@ -41,9 +41,15 @@ export async function GET(request) {
       .limit(limit)
       .lean();
 
-    return NextResponse.json({ products, totalPages, totalProducts }, { status: 200 });
+    return NextResponse.json(
+      { products, totalPages, totalProducts },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error fetching products:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PencilIcon, CheckIcon, TrashIcon } from 'lucide-react';
+import { PencilIcon, CheckIcon, TrashIcon } from "lucide-react";
 
-export default function ProductTable({ data, onProductSelect, selectedProducts, onProductEdit, onProductDelete }) {
+export default function ProductTable({
+  data,
+  onProductSelect,
+  selectedProducts,
+  onProductEdit,
+  onProductDelete,
+}) {
   const [editingId, setEditingId] = useState(null);
   const [editedProduct, setEditedProduct] = useState({});
 
@@ -31,10 +37,12 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
           <tr>
             <th className="px-6 py-3">
               <Checkbox
-                checked={selectedProducts.length === data.length && data.length > 0}
+                checked={
+                  selectedProducts.length === data.length && data.length > 0
+                }
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    onProductSelect(data.map(product => product._id));
+                    onProductSelect(data.map((product) => product._id));
                   } else {
                     onProductSelect([]);
                   }
@@ -51,7 +59,10 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
         </thead>
         <tbody>
           {data.map((product) => (
-            <tr key={product._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr
+              key={product._id}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+            >
               <td className="px-6 py-4">
                 <Checkbox
                   checked={selectedProducts.includes(product._id)}
@@ -62,7 +73,7 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
                 {editingId === product._id ? (
                   <Input
                     value={editedProduct.name}
-                    onChange={(e) => handleChange(e, 'name')}
+                    onChange={(e) => handleChange(e, "name")}
                   />
                 ) : (
                   product.name
@@ -73,7 +84,7 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
                   <Input
                     type="number"
                     value={editedProduct.sell_price}
-                    onChange={(e) => handleChange(e, 'sell_price')}
+                    onChange={(e) => handleChange(e, "sell_price")}
                   />
                 ) : (
                   `$${product.sell_price.toFixed(2)}`
@@ -84,7 +95,7 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
                   <Input
                     type="number"
                     value={editedProduct.cost_price}
-                    onChange={(e) => handleChange(e, 'cost_price')}
+                    onChange={(e) => handleChange(e, "cost_price")}
                   />
                 ) : (
                   `$${product.cost_price.toFixed(2)}`
@@ -95,7 +106,7 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
                   <Input
                     type="number"
                     value={editedProduct.inventory}
-                    onChange={(e) => handleChange(e, 'inventory')}
+                    onChange={(e) => handleChange(e, "inventory")}
                   />
                 ) : (
                   product.inventory
@@ -105,7 +116,7 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
                 {editingId === product._id ? (
                   <Input
                     value={editedProduct.description}
-                    onChange={(e) => handleChange(e, 'description')}
+                    onChange={(e) => handleChange(e, "description")}
                   />
                 ) : (
                   product.description
@@ -117,11 +128,19 @@ export default function ProductTable({ data, onProductSelect, selectedProducts, 
                     <CheckIcon className="h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button onClick={() => handleEdit(product)} variant="ghost" size="sm">
+                  <Button
+                    onClick={() => handleEdit(product)}
+                    variant="ghost"
+                    size="sm"
+                  >
                     <PencilIcon className="h-4 w-4" />
                   </Button>
                 )}
-                <Button onClick={() => onProductDelete(product._id)} variant="ghost" size="sm">
+                <Button
+                  onClick={() => onProductDelete(product._id)}
+                  variant="ghost"
+                  size="sm"
+                >
                   <TrashIcon className="h-4 w-4" />
                 </Button>
               </td>

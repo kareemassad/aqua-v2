@@ -23,7 +23,9 @@ export async function PUT(request, { params }) {
 
   try {
     await connectMongo();
-    const product = await Product.findByIdAndUpdate(productId, updatedProduct, { new: true });
+    const product = await Product.findByIdAndUpdate(productId, updatedProduct, {
+      new: true,
+    });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }

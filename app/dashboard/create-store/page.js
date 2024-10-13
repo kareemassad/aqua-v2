@@ -33,10 +33,10 @@ const CreateStore = () => {
 
   const fetchStores = async () => {
     try {
-      const response = await axios.get('/api/stores');
+      const response = await axios.get("/api/stores");
       setStores(response.data.stores);
     } catch (error) {
-      console.error('Error fetching stores:', error);
+      console.error("Error fetching stores:", error);
     }
   };
 
@@ -73,15 +73,20 @@ const CreateStore = () => {
           className="w-full p-2 border rounded"
         />
         {/* Add fields for contact_info as needed */}
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">
+        <button
+          type="submit"
+          className="w-full p-2 bg-blue-500 text-white rounded"
+        >
           Create Store
         </button>
       </form>
 
       <h2 className="text-xl font-bold mt-8">Existing Stores</h2>
       <ul className="list-disc pl-5">
-        {stores.map(store => (
-          <li key={store._id}>{store.name} - {store.description}</li>
+        {stores.map((store) => (
+          <li key={store._id}>
+            {store.name} - {store.description}
+          </li>
         ))}
       </ul>
     </main>

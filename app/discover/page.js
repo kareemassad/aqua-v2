@@ -10,7 +10,7 @@ const DiscoverPage = () => {
   useEffect(() => {
     const fetchPublicStores = async () => {
       try {
-        const response = await axios.get('/api/stores/public');
+        const response = await axios.get("/api/stores/public");
         setStores(response.data.stores);
       } catch (err) {
         setError("Failed to fetch public stores.");
@@ -27,7 +27,7 @@ const DiscoverPage = () => {
     <div>
       <h1>Discover Stores</h1>
       <ul>
-        {stores.map(store => (
+        {stores.map((store) => (
           <li key={store._id}>
             <a href={`/collections/${store.uniqueLinkId}`}>{store.name}</a>
           </li>

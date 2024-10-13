@@ -35,10 +35,15 @@ export async function GET(req, { params }) {
 
     const products = await Product.find({ store_id: store._id }).lean();
 
-    console.log(`Fetched ${products.length} products for storeId: ${store._id}`);
+    console.log(
+      `Fetched ${products.length} products for storeId: ${store._id}`,
+    );
     return NextResponse.json({ user, store, products }, { status: 200 });
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

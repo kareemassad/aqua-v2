@@ -107,7 +107,7 @@ export async function POST(req) {
         // ❌ Revoke access to the product
         // The customer might have changed the plan (higher or lower plan, cancel soon etc...)
         const subscription = await stripe.subscriptions.retrieve(
-          data.object.id
+          data.object.id,
         );
         const user = await User.findOne({ customerId: subscription.customer });
 

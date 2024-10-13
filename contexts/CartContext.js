@@ -13,13 +13,15 @@ export function CartProvider({ children }) {
   const addToCart = (product) => {
     setCart((prevCart) => {
       // Check if product already exists in cart
-      const existingItem = prevCart.find((item) => item.product._id === product._id);
+      const existingItem = prevCart.find(
+        (item) => item.product._id === product._id,
+      );
       if (existingItem) {
         // Update quantity if already in cart
         return prevCart.map((item) =>
           item.product._id === product._id
             ? { ...item, quantity: item.quantity + 1 }
-            : item
+            : item,
         );
       } else {
         // Add new product to cart
@@ -31,7 +33,7 @@ export function CartProvider({ children }) {
   // Remove item from cart
   const removeFromCart = (productId) => {
     setCart((prevCart) =>
-      prevCart.filter((item) => item.product._id !== productId)
+      prevCart.filter((item) => item.product._id !== productId),
     );
   };
 

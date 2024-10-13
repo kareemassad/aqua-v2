@@ -5,7 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import logo from "/app/icon.png";
 
 const links = [
@@ -29,7 +34,9 @@ const Header = () => {
           <div className="flex">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <Image src={logo} alt="ShipFast Logo" width={32} height={32} />
-              <span className="ml-2 text-xl font-bold text-gray-900">ShipFast</span>
+              <span className="ml-2 text-xl font-bold text-gray-900">
+                ShipFast
+              </span>
             </Link>
           </div>
           <div className="hidden md:flex items-center">

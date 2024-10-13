@@ -3,11 +3,22 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function CreateCollectionModal({ isOpen, onClose, selectedProducts, storeId }) {
+export default function CreateCollectionModal({
+  isOpen,
+  onClose,
+  selectedProducts,
+  storeId,
+}) {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,11 +38,13 @@ export default function CreateCollectionModal({ isOpen, onClose, selectedProduct
       const collectionId = response.data._id;
 
       // Add selected products to the collection
-      await Promise.all(selectedProducts.map(productId =>
-        axios.post(`/api/collections/${collectionId}/items/create`, {
-          product_id: productId
-        })
-      ));
+      await Promise.all(
+        selectedProducts.map((productId) =>
+          axios.post(`/api/collections/${collectionId}/items/create`, {
+            product_id: productId,
+          }),
+        ),
+      );
 
       toast.success("Collection created successfully");
       onClose();

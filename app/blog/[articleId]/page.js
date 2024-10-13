@@ -39,8 +39,8 @@ export default async function Article({ params }) {
       (a) =>
         a.slug !== params.articleId &&
         a.categories.some((c) =>
-          article.categories.map((c) => c.slug).includes(c.slug)
-        )
+          article.categories.map((c) => c.slug).includes(c.slug),
+        ),
     )
     .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
     .slice(0, 3);

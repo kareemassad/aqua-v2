@@ -28,9 +28,7 @@ export default function RootLayout({ children }) {
         </head>
       )}
       <body>
-        <NextSSRPlugin
-          routerConfig={extractRouterConfig(ourFileRouter)}
-        />
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

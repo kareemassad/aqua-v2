@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -11,14 +11,23 @@ const Hero = () => {
               Ship your startup in days, not weeks
             </h1>
             <p className="mt-6 text-xl text-gray-300">
-              Our platform provides all the tools and resources you need to launch your startup quickly and efficiently.
+              Our platform provides all the tools and resources you need to
+              launch your startup quickly and efficiently.
             </p>
             <div className="mt-10">
-              <Button size="lg" className="px-8 py-3 text-lg">Start Building Now</Button>
+              <Button size="lg" className="px-8 py-3 text-lg">
+                Start Building Now
+              </Button>
             </div>
           </div>
           <div className="mt-12 lg:mt-0">
-            <Image src="/hero-image.jpg" alt="Startup Launch" width={600} height={400} className="rounded-lg shadow-xl" />
+            <Image
+              src="/hero-image.jpg"
+              alt="Startup Launch"
+              width={600}
+              height={400}
+              className="rounded-lg shadow-xl"
+            />
           </div>
         </div>
       </div>

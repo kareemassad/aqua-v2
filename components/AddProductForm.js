@@ -41,12 +41,12 @@ export default function AddProductForm({ storeId, onProductAdded }) {
         sell_price: parsedSellPrice,
         inventory: parsedInventory,
       };
-      
+
       const response = await axios.post("/api/products/create", payload);
       if (response.status === 201) {
         setForm({ name: "", sell_price: "", cost_price: "", inventory: 0 });
         toast.success("Product added successfully!");
-        if(onProductAdded) onProductAdded(); // Notify parent component
+        if (onProductAdded) onProductAdded(); // Notify parent component
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -93,7 +93,10 @@ export default function AddProductForm({ storeId, onProductAdded }) {
         onChange={handleChange}
         className="w-full p-2 border rounded"
       />
-      <button type="submit" className="w-full p-2 bg-green-500 text-white rounded">
+      <button
+        type="submit"
+        className="w-full p-2 bg-green-500 text-white rounded"
+      >
         Add Product
       </button>
     </form>

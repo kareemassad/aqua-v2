@@ -20,10 +20,13 @@ export async function DELETE(request, { params }) {
 
     const collection = await Collection.findById(collectionId);
 
-    if (!collection || collection.store_id.toString() !== session.user.storeId) {
+    if (
+      !collection ||
+      collection.store_id.toString() !== session.user.storeId
+    ) {
       return NextResponse.json(
         { error: "Collection not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -35,16 +38,19 @@ export async function DELETE(request, { params }) {
     if (!collectionItem) {
       return NextResponse.json(
         { error: "Product not found in the collection" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    return NextResponse.json({ message: "Product removed from collection" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Product removed from collection" },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error removing product from collection:", error);
     return NextResponse.json(
       { error: "Failed to remove product from collection" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

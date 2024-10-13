@@ -1,17 +1,17 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, Package, Share2, ShoppingCart, User, Boxes } from 'lucide-react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, Package, Share2, ShoppingCart, User, Boxes } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/dashboard/products', label: 'Products', icon: Package },
-  { href: '/dashboard/collections', label: 'Collections', icon: Boxes },
-  { href: '/dashboard/generate-link', label: 'Share', icon: Share2 },
-  { href: '/dashboard/orders', label: 'Orders', icon: ShoppingCart },
-  { href: '/dashboard/account', label: 'Account', icon: User },
+  { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/dashboard/products", label: "Products", icon: Package },
+  { href: "/dashboard/collections", label: "Collections", icon: Boxes },
+  { href: "/dashboard/generate-link", label: "Share", icon: Share2 },
+  { href: "/dashboard/orders", label: "Orders", icon: ShoppingCart },
+  { href: "/dashboard/account", label: "Account", icon: User },
 ];
 
 export default function DashboardNav() {

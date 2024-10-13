@@ -1,7 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const faqList = [
   {
@@ -92,23 +97,30 @@ const FAQ = () => {
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
           Frequently Asked Questions
         </h2>
-        <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full max-w-3xl mx-auto"
+        >
           <AccordionItem value="item-1">
             <AccordionTrigger>What tech stack do you use?</AccordionTrigger>
             <AccordionContent>
-              We use a modern tech stack including React, Next.js, and Node.js, with options for SQL or NoSQL databases.
+              We use a modern tech stack including React, Next.js, and Node.js,
+              with options for SQL or NoSQL databases.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Can I customize the components?</AccordionTrigger>
             <AccordionContent>
-              Yes, all our components are fully customizable to fit your brand and design needs.
+              Yes, all our components are fully customizable to fit your brand
+              and design needs.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger>Do you offer refunds?</AccordionTrigger>
             <AccordionContent>
-              We offer a 30-day money-back guarantee if you&apos;re not satisfied with our product.
+              We offer a 30-day money-back guarantee if you&apos;re not
+              satisfied with our product.
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -36,10 +36,11 @@ const subscriptionSchema = mongoose.Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-  }
+  },
 );
 
 // Add plugin that converts mongoose to json
 subscriptionSchema.plugin(toJSON);
 
-export default mongoose.models.Subscription || mongoose.model("Subscription", subscriptionSchema);
+export default mongoose.models.Subscription ||
+  mongoose.model("Subscription", subscriptionSchema);

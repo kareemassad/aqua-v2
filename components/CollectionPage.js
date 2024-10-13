@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import React from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from 'lucide-react';
+import { Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -34,20 +34,23 @@ export default function CollectionPage({ collection }) {
 
   const handleDeleteProduct = async (productId) => {
     try {
-      const response = await fetch(`/api/collections/${collectionState._id}/items/${productId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/collections/${collectionState._id}/items/${productId}`,
+        {
+          method: "DELETE",
+        },
+      );
       if (response.ok) {
-        toast.success('Product removed from collection.');
+        toast.success("Product removed from collection.");
         // Optionally, refresh the page or update state
         router.refresh();
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || 'Failed to remove product.');
+        toast.error(errorData.error || "Failed to remove product.");
       }
     } catch (error) {
-      console.error('Error removing product:', error);
-      toast.error('An error occurred while removing the product.');
+      console.error("Error removing product:", error);
+      toast.error("An error occurred while removing the product.");
     }
   };
 
@@ -59,10 +62,19 @@ export default function CollectionPage({ collection }) {
         <p>No products in this collection.</p>
       ) : (
         <ul>
-          {collectionState.products.map(product => (
-            <li key={product._id} className="flex justify-between items-center mb-2">
-              <span>{product.name} - ${product.sell_price.toFixed(2)}</span>
-              <Button variant="ghost" size="sm" onClick={() => handleDeleteProduct(product._id)}>
+          {collectionState.products.map((product) => (
+            <li
+              key={product._id}
+              className="flex justify-between items-center mb-2"
+            >
+              <span>
+                {product.name} - ${product.sell_price.toFixed(2)}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteProduct(product._id)}
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </li>

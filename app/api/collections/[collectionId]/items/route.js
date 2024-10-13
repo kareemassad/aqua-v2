@@ -20,15 +20,18 @@ export async function GET(request, { params }) {
 
     const collection = await Collection.findById(collectionId)
       .populate({
-        path: 'products',
-        populate: { path: 'product_id' },
+        path: "products",
+        populate: { path: "product_id" },
       })
       .exec();
 
-    if (!collection || collection.store_id.toString() !== session.user.storeId) {
+    if (
+      !collection ||
+      collection.store_id.toString() !== session.user.storeId
+    ) {
       return NextResponse.json(
         { error: "Collection not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -37,7 +40,7 @@ export async function GET(request, { params }) {
     console.error("Error fetching collection items:", error);
     return NextResponse.json(
       { error: "Failed to fetch collection items" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -58,12 +61,15 @@ export async function POST(request, { params }) {
     const collection = await Collection.findById(collectionId);
 
     if (!collection) {
-      return NextResponse.json({ error: "Collection not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Collection not found" },
+        { status: 404 },
+      );
     }
 
     // Filter out products that are already in the collection
-    const newProducts = products.filter(productId => 
-      !collection.products.includes(productId)
+    const newProducts = products.filter(
+      (productId) => !collection.products.includes(productId),
     );
 
     // Add only the new products to the collection
@@ -72,17 +78,23 @@ export async function POST(request, { params }) {
       await collection.save();
     }
 
-    return NextResponse.json({ 
-      message: newProducts.length > 0 ? "Products added successfully" : "No new products to add",
-      addedCount: newProducts.length,
-      totalProducts: collection.products.length,
-      alreadyInCollection: products.length - newProducts.length
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        message:
+          newProducts.length > 0
+            ? "Products added successfully"
+            : "No new products to add",
+        addedCount: newProducts.length,
+        totalProducts: collection.products.length,
+        alreadyInCollection: products.length - newProducts.length,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error adding products to collection:", error);
     return NextResponse.json(
       { error: "Failed to add products to collection" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

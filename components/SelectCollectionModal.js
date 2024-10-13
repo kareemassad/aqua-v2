@@ -3,13 +3,32 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function SelectCollectionModal({ isOpen, onClose, selectedProducts, storeId, onSelectCollection }) {
+export default function SelectCollectionModal({
+  isOpen,
+  onClose,
+  selectedProducts,
+  storeId,
+  onSelectCollection,
+}) {
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [newCollectionName, setNewCollectionName] = useState("");
@@ -39,7 +58,13 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
       setError("Collection name cannot be empty");
       return false;
     }
-    if (collections.some(collection => collection.name.toLowerCase() === newCollectionName.trim().toLowerCase())) {
+    if (
+      collections.some(
+        (collection) =>
+          collection.name.toLowerCase() ===
+          newCollectionName.trim().toLowerCase(),
+      )
+    ) {
       setError("A collection with this name already exists");
       return false;
     }
@@ -62,7 +87,10 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
       let collectionId;
       if (activeTab === "new") {
         // Create a new collection
-        const response = await axios.post("/api/collections", { name: newCollectionName, storeId });
+        const response = await axios.post("/api/collections", {
+          name: newCollectionName,
+          storeId,
+        });
         collectionId = response.data._id;
       } else {
         collectionId = selectedCollection;
@@ -70,7 +98,7 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
 
       // Call the onSelectCollection prop function
       await onSelectCollection(collectionId);
-      
+
       onClose();
       toast.success("Products added to collection successfully");
     } catch (error) {
@@ -87,7 +115,8 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
         <DialogHeader>
           <DialogTitle>Add Products to Collection</DialogTitle>
           <DialogDescription>
-            Select an existing collection or create a new one to add the selected products.
+            Select an existing collection or create a new one to add the
+            selected products.
           </DialogDescription>
         </DialogHeader>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -96,7 +125,10 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
             <TabsTrigger value="new">New Collection</TabsTrigger>
           </TabsList>
           <TabsContent value="existing">
-            <Select value={selectedCollection} onValueChange={setSelectedCollection}>
+            <Select
+              value={selectedCollection}
+              onValueChange={setSelectedCollection}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a collection" />
               </SelectTrigger>
@@ -124,8 +156,13 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
         </Tabs>
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         <DialogFooter>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleAddToCollection} disabled={isLoading || !!error}>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAddToCollection}
+            disabled={isLoading || !!error}
+          >
             {isLoading ? "Adding..." : "Add to Collection"}
           </Button>
         </DialogFooter>

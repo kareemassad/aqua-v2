@@ -16,12 +16,18 @@ export async function GET(request) {
     const store = await Store.findOne({ user_id: session.user.id });
 
     if (store) {
-      return NextResponse.json({ storeId: store._id.toString() }, { status: 200 });
+      return NextResponse.json(
+        { storeId: store._id.toString() },
+        { status: 200 },
+      );
     } else {
       return NextResponse.json({ error: "Store not found" }, { status: 404 });
     }
   } catch (error) {
     console.error("Error fetching store:", error);
-    return NextResponse.json({ error: "Failed to fetch store" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch store" },
+      { status: 500 },
+    );
   }
 }

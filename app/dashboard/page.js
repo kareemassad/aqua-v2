@@ -5,7 +5,13 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart, Package, Link as LinkIcon, CreditCard, Settings } from 'lucide-react';
+import {
+  BarChart,
+  Package,
+  Link as LinkIcon,
+  CreditCard,
+  Settings,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
@@ -18,10 +24,9 @@ export default function Dashboard() {
     activeLinks: 0,
     pendingOrders: 0,
     totalSales: 0,
-    email: '',
-    storeName: '',
+    email: "",
+    storeName: "",
   });
-
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -30,7 +35,7 @@ export default function Dashboard() {
           setIsLoading(true);
           const response = await axios.get(`/api/dashboard`);
           setDashboardData(response.data);
-          setUser(prevUser => ({
+          setUser((prevUser) => ({
             ...prevUser,
             email: response.data.user.email,
             storeName: response.data.store.name,
@@ -50,17 +55,20 @@ export default function Dashboard() {
 
   if (status === "loading" || isLoading) return <div>Loading...</div>;
   if (!session) return <div>Please sign in to view the dashboard.</div>;
-  if (!dashboardData) return <div>No data found. Please try refreshing the page.</div>;
+  if (!dashboardData)
+    return <div>No data found. Please try refreshing the page.</div>;
 
   // Render your dashboard content here using the dashboardData state
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">Welcome, {session.user.name}</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Products
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -78,7 +86,9 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Orders
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -91,7 +101,9 @@ export default function Dashboard() {
             <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${user.totalSales.toFixed(2)}</div>
+            <div className="text-2xl font-bold">
+              ${user.totalSales.toFixed(2)}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -118,8 +130,12 @@ export default function Dashboard() {
             <CardTitle>Account Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Store Name:</strong> {user.storeName}</p>
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Store Name:</strong> {user.storeName}
+            </p>
             <Link href="/dashboard/settings">
               <Button variant="outline" className="mt-4">
                 <Settings className="mr-2 h-4 w-4" />

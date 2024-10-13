@@ -1,20 +1,30 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ImageDropZone from "@/components/uploadthing/ImageDropZone";
 
-export default function AddProductModal({ isOpen, onClose, onProductAdded, storeId }) {
+export default function AddProductModal({
+  isOpen,
+  onClose,
+  onProductAdded,
+  storeId,
+}) {
   const [form, setForm] = useState({
     name: "",
     cost_price: "",
     sell_price: "",
     inventory: 0,
     description: "",
-    image: ""
+    image: "",
   });
   const [imageUrl, setImageUrl] = useState("");
 
@@ -116,7 +126,11 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, store
           {imageUrl && (
             <div>
               <p>Uploaded Image:</p>
-              <img src={imageUrl} alt="Product" className="mt-2 h-32 w-32 object-cover" />
+              <img
+                src={imageUrl}
+                alt="Product"
+                className="mt-2 h-32 w-32 object-cover"
+              />
             </div>
           )}
           <Button type="submit">Create Product</Button>

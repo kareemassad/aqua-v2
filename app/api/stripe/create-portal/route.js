@@ -24,12 +24,12 @@ export async function POST(req) {
             error:
               "You don't have a billing account yet. Make a purchase first.",
           },
-          { status: 400 }
+          { status: 400 },
         );
       } else if (!body.returnUrl) {
         return NextResponse.json(
           { error: "Return URL is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 

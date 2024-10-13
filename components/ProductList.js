@@ -10,7 +10,13 @@ export default function ProductList({ products, selectedProducts, onSelect }) {
       {products.map((product) => (
         <div key={product._id} className="border p-4 rounded flex flex-col">
           {product.image && (
-            <img src={product.image} alt={product.name} width={200} height={200} className="object-cover rounded mb-2" />
+            <img
+              src={product.image}
+              alt={product.name}
+              width={200}
+              height={200}
+              className="object-cover rounded mb-2"
+            />
           )}
           <h2 className="text-xl font-semibold">{product.name}</h2>
           <p>Sell Price: ${product.sell_price.toFixed(2)}</p>

@@ -8,7 +8,7 @@ const nextConfig = {
       "images.unsplash.com",
       "logos-world.net",
     ],
-  }
+  },
 };
 
 module.exports = nextConfig;

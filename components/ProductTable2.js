@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Table,
   TableBody,
@@ -29,10 +29,19 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
             <TableCell>${product.sell_price.toFixed(2)}</TableCell>
             <TableCell>{product.inventory}</TableCell>
             <TableCell>
-              <Button onClick={() => onEdit(product)} variant="outline" size="sm" className="mr-2">
+              <Button
+                onClick={() => onEdit(product)}
+                variant="outline"
+                size="sm"
+                className="mr-2"
+              >
                 Edit
               </Button>
-              <Button onClick={() => onDelete(product._id)} variant="destructive" size="sm">
+              <Button
+                onClick={() => onDelete(product._id)}
+                variant="destructive"
+                size="sm"
+              >
                 Delete
               </Button>
             </TableCell>

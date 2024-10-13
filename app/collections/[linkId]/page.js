@@ -32,8 +32,10 @@ const CollectionPage = () => {
       <p>{collection.description}</p>
       {/* Render products in the collection */}
       <ul>
-        {collection.products.map(product => (
-          <li key={product._id}>{product.name} - ${product.sell_price}</li>
+        {collection.products.map((product) => (
+          <li key={product._id}>
+            {product.name} - ${product.sell_price}
+          </li>
         ))}
       </ul>
     </div>

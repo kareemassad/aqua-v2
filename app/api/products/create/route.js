@@ -36,11 +36,20 @@ export async function POST(request) {
     } = payload;
 
     // Validate required fields
-    if (!name || cost_price == null || sell_price == null || inventory == null || !store_id) {
+    if (
+      !name ||
+      cost_price == null ||
+      sell_price == null ||
+      inventory == null ||
+      !store_id
+    ) {
       console.warn("Missing required fields");
       return NextResponse.json(
-        { error: "Missing required fields: name, cost_price, sell_price, inventory, store_id" },
-        { status: 400 }
+        {
+          error:
+            "Missing required fields: name, cost_price, sell_price, inventory, store_id",
+        },
+        { status: 400 },
       );
     }
 
@@ -58,8 +67,11 @@ export async function POST(request) {
     ) {
       console.warn("Invalid data types for fields");
       return NextResponse.json(
-        { error: "Invalid data types for fields: name must be string, cost_price, sell_price, inventory must be valid numbers" },
-        { status: 400 }
+        {
+          error:
+            "Invalid data types for fields: name must be string, cost_price, sell_price, inventory must be valid numbers",
+        },
+        { status: 400 },
       );
     }
 
@@ -71,8 +83,11 @@ export async function POST(request) {
     ) {
       console.warn("Invalid numerical values");
       return NextResponse.json(
-        { error: "Invalid numerical values for cost_price, sell_price, or inventory" },
-        { status: 400 }
+        {
+          error:
+            "Invalid numerical values for cost_price, sell_price, or inventory",
+        },
+        { status: 400 },
       );
     }
 
@@ -95,7 +110,7 @@ export async function POST(request) {
         console.warn("Duplicate product based on id_number");
         return NextResponse.json(
           { error: "Duplicate product based on id_number" },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -109,7 +124,7 @@ export async function POST(request) {
       console.warn("Store not found or unauthorized");
       return NextResponse.json(
         { error: "Store not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -129,10 +144,13 @@ export async function POST(request) {
     console.log("Product created successfully:", newProduct);
     return NextResponse.json(
       { message: "Product created successfully", product: newProduct },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Error creating product:", error);
-    return NextResponse.json({ error: "Error creating product" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error creating product" },
+      { status: 500 },
+    );
   }
 }

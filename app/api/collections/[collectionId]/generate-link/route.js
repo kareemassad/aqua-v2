@@ -18,13 +18,13 @@ export async function POST(request, { params }) {
 
     const collection = await Collection.findOne({
       _id: collectionId,
-      store_id: session.user.storeId
+      store_id: session.user.storeId,
     });
 
     if (!collection) {
       return NextResponse.json(
         { error: "Collection not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function POST(request, { params }) {
     console.error("Error generating unique link:", error);
     return NextResponse.json(
       { error: "Failed to generate unique link" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

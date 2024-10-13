@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth";
 import config from "@/config";
-import DashboardNav from '@/components/DashboardNav';
+import DashboardNav from "@/components/DashboardNav";
 
 // This is a server-side component to ensure the user is logged in.
 // If not, it will redirect to the login page.
@@ -17,9 +17,7 @@ export default async function LayoutPrivate({ children }) {
   return (
     <div className="min-h-screen bg-background">
       <DashboardNav />
-      <main className="container mx-auto p-6">
-        {children}
-      </main>
+      <main className="container mx-auto p-6">{children}</main>
     </div>
   );
 }

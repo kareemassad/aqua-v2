@@ -1,6 +1,7 @@
 {
-    "workbench.colorCustomizations": {
-        "terminalCursor.foreground": "#00ffaa"
-    },
-    "terminal.integrated.cursorBlinking": true
+  "workbench.colorCustomizations": {
+    "terminalCursor.foreground": "#00ffaa"
+  },
+  "terminal.integrated.cursorBlinking": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

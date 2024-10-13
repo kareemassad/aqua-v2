@@ -32,10 +32,11 @@ const paymentSchema = mongoose.Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-  }
+  },
 );
 
 // Add plugin that converts mongoose to json
 paymentSchema.plugin(toJSON);
 
-export default mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
+export default mongoose.models.Payment ||
+  mongoose.model("Payment", paymentSchema);

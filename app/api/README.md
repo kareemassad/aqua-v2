@@ -3,6 +3,7 @@
 This directory contains the API routes for the application. The structure is organized as follows:
 
 ## /api
+
 - `auth/`: Authentication-related routes
   - `[...nextauth]/`: NextAuth.js configuration and routes
 - `collections/`: Collection management routes
@@ -35,6 +36,7 @@ This directory contains the API routes for the application. The structure is org
   - `stripe/`: Stripe webhook route
 
 ## Best Practices
+
 1. Use meaningful and descriptive names for route files and folders.
 2. Implement proper error handling and validation in each route.
 3. Use middleware for authentication and authorization where necessary.
@@ -47,6 +49,7 @@ This directory contains the API routes for the application. The structure is org
 10. Consider versioning the API if major changes are expected in the future.
 
 ## Notes
+
 - The `[...]` notation in folder names indicates dynamic routes in Next.js.
 - Ensure that all routes are properly secured and only accessible to authorized users where necessary.
 - Regularly review and update the API structure as the application evolves.

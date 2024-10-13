@@ -5,13 +5,14 @@ import { generateClientDropzoneAccept } from "uploadthing/client";
 import { useCallback } from "react";
 
 export default function ImageDropZone({ onUploadSuccess }) {
-  const onDrop = useCallback((acceptedFiles) => {
-    console.log(acceptedFiles);
-    if (onUploadSuccess) {
-      onUploadSuccess({ type: "image", url: acceptedFiles[0].fileUrl });
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      console.log(acceptedFiles);
+      if (onUploadSuccess) {
+        onUploadSuccess({ type: "image", url: acceptedFiles[0].fileUrl });
       }
     },
-    [onUploadSuccess]
+    [onUploadSuccess],
   );
 
   const { getRootProps, getInputProps } = useDropzone({

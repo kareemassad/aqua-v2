@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import ExcelDropZone from "@/components/uploadthing/ExcelDropZone";
 import { toast } from "react-hot-toast";
-
+import { Upload } from "lucide-react";
 export default function ExcelUploadModal({ onImportSuccess }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,7 +42,8 @@ export default function ExcelUploadModal({ onImportSuccess }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button>
+          <Upload className="mr-2 h-4 w-4" />
           Upload Excel
         </Button>
       </DialogTrigger>

@@ -21,13 +21,13 @@ export async function PUT(request, { params }) {
     const collection = await Collection.findOneAndUpdate(
       { _id: collectionId, store_id: session.user.storeId },
       { name },
-      { new: true }
+      { new: true },
     );
 
     if (!collection) {
       return NextResponse.json(
         { error: "Collection not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function PUT(request, { params }) {
     console.error("Error updating collection:", error);
     return NextResponse.json(
       { error: "Failed to update collection" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -54,21 +54,27 @@ export async function DELETE(request, { params }) {
 
     const collection = await Collection.findById(collectionId);
 
-    if (!collection || collection.store_id.toString() !== session.user.storeId) {
+    if (
+      !collection ||
+      collection.store_id.toString() !== session.user.storeId
+    ) {
       return NextResponse.json(
         { error: "Collection not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     await collection.remove();
 
-    return NextResponse.json({ message: "Collection deleted successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Collection deleted successfully" },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error deleting collection:", error);
     return NextResponse.json(
       { error: "Failed to delete collection" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

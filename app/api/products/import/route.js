@@ -16,7 +16,10 @@ export async function POST(request) {
     const { mappings, data } = await request.json();
 
     if (!mappings || !data || !Array.isArray(data)) {
-      return NextResponse.json({ error: "Invalid data format" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid data format" },
+        { status: 400 },
+      );
     }
 
     await connectMongo();
@@ -38,10 +41,10 @@ export async function POST(request) {
       for (let [excelField, productField] of Object.entries(mappings)) {
         if (productField) {
           let value = row[headers.indexOf(excelField)];
-          if (typeof value === 'string') {
+          if (typeof value === "string") {
             value = value.trim();
           }
-          productData[productField] = value || '';
+          productData[productField] = value || "";
         }
       }
 
@@ -61,14 +64,23 @@ export async function POST(request) {
     });
 
     if (productsToCreate.length === 0) {
-      return NextResponse.json({ error: "No valid products to import" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No valid products to import" },
+        { status: 400 },
+      );
     }
 
     await Product.insertMany(productsToCreate);
 
-    return NextResponse.json({ message: "Products imported successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Products imported successfully" },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error importing products:", error);
-    return NextResponse.json({ error: "Failed to import products" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to import products" },
+      { status: 500 },
+    );
   }
 }
