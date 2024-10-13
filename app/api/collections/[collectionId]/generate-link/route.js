@@ -5,6 +5,7 @@ import Collection from '@/models/Collection'
 import Store from '@/models/Store'
 import { authOptions } from '@/lib/next-auth'
 import { v4 as uuidv4 } from 'uuid'
+import Link from '@/models/Link'
 
 export async function POST(request, { params }) {
   const { collectionId } = params
@@ -56,7 +57,15 @@ export async function POST(request, { params }) {
     })
 
     await collection.save()
-    return NextResponse.json({ uniqueLink }, { status: 200 })
+
+    const newLink = await Link.create({
+      userId: session.user.id,
+      collectionId: collection._id,
+      linkId: uniqueLink,
+      isPublic: false
+    })
+
+    return NextResponse.json({ link: newLink }, { status: 200 })
   } catch (error) {
     console.error('Error generating unique link:', error)
     return NextResponse.json(

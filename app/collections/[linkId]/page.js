@@ -3,10 +3,11 @@
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import CollectionPage from '@/components/CollectionPage'
+import LinkNavbar from '@/components/LinkNavbar'
 
-const CollectionPage = () => {
-  const params = useParams()
-  const { linkId } = params
+export default function CollectionView() {
+  const { linkId } = useParams()
   const [collection, setCollection] = useState(null)
   const [error, setError] = useState(null)
 
@@ -23,23 +24,13 @@ const CollectionPage = () => {
     fetchCollection()
   }, [linkId])
 
-  if (error) return <div>{error}</div>
-  if (!collection) return <div>Loading...</div>
+  if (error) return <div className="text-center text-red-500">{error}</div>
+  if (!collection) return <div className="text-center">Loading...</div>
 
   return (
-    <div>
-      <h1>{collection.name}</h1>
-      <p>{collection.description}</p>
-      {/* Render products in the collection */}
-      <ul>
-        {collection.products.map((product) => (
-          <li key={product._id}>
-            {product.name} - ${product.sell_price}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <LinkNavbar />
+      <CollectionPage collection={collection} />
+    </>
   )
 }
-
-export default CollectionPage

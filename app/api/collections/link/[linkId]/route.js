@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import connectMongo from '@/lib/mongoose'
 import Collection from '@/models/Collection'
+import Link from '@/models/Link'
 
 export async function GET(request, { params }) {
   const { linkId } = params
@@ -8,11 +9,15 @@ export async function GET(request, { params }) {
   try {
     await connectMongo()
 
-    const collection = await Collection.findOne({
-      'uniqueLinks.linkId': linkId
-    })
+    const link = await Link.findOne({ linkId }).populate('collectionId')
+    if (!link) {
+      return NextResponse.json({ error: 'Link not found' }, { status: 404 })
+    }
+
+    const collection = await Collection.findById(link.collectionId)
       .populate('products')
       .lean()
+
     if (!collection) {
       return NextResponse.json(
         { error: 'Collection not found' },
@@ -20,13 +25,10 @@ export async function GET(request, { params }) {
       )
     }
 
-    // Track the click
-    const link = collection.uniqueLinks.find((l) => l.linkId === linkId)
-    if (link) {
-      link.clickCount += 1
-      link.lastClickedAt = new Date()
-      await collection.save()
-    }
+    // Update click count
+    link.clickCount += 1
+    link.lastClickedAt = new Date()
+    await link.save()
 
     return NextResponse.json({ collection }, { status: 200 })
   } catch (error) {
