@@ -34,7 +34,7 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, store
 
     const payload = {
       ...form,
-      store_id: storeId, // Ensure storeId is included in the payload
+      store_id: storeId,
       image: imageUrl,
     };
 

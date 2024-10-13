@@ -1,0 +1,42 @@
+meta {
+  name: Create Store
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/stores/create
+  auth: bearer
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "name": "My Awesome Store",
+    "description": "A store for awesome products",
+    "logo": "https://example.com/logo.png",
+    "contact_info": {
+      "phone": "1234567890",
+      "email": "store@example.com"
+    },
+    "premium": false
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:3000
+  authToken: // Add your auth token here
+}
+
+script:post-response {
+  // Store the store ID for future requests
+  bru.setEnvVar("storeId", res.body._id);
+}

@@ -1,0 +1,35 @@
+meta {
+  name: Create Collection
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/collections
+  auth: bearer
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "name": "My First Collection"
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:3000
+  authToken: // Add your auth token here
+}
+
+script:post-response {
+  // Store the collection ID for future requests
+  bru.setEnvVar("collectionId", res.body._id);
+}

@@ -1,9 +1,9 @@
 import Subscription from '@/models/Subscription';
-import connectDB from '@/lib/mongoose';
+import connectMongo from '@/lib/mongoose';
 
 export async function GET(request) {
     try {
-        await connectDB();
+        await connectMongo();
         const subscriptions = await Subscription.find();
         return new Response(JSON.stringify({ subscriptions }), {
             status: 200,
@@ -19,7 +19,7 @@ export async function GET(request) {
 
 export async function POST(request) {
     try {
-        await connectDB();
+        await connectMongo();
         const data = await request.json();
         const newSubscription = new Subscription(data);
         await newSubscription.save();

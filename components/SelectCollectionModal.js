@@ -9,13 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function SelectCollectionModal({ isOpen, onClose, selectedProducts, onProductsAdded }) {
+export default function SelectCollectionModal({ isOpen, onClose, selectedProducts, storeId, onSelectCollection }) {
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [newCollectionName, setNewCollectionName] = useState("");
   const [activeTab, setActiveTab] = useState("existing");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -52,62 +53,36 @@ export default function SelectCollectionModal({ isOpen, onClose, selectedProduct
       return;
     }
 
-    if (activeTab === "new" && !newCollectionName.trim()) {
-      setError("Please enter a name for the new collection");
+    if (activeTab === "new" && !validateNewCollectionName()) {
       return;
     }
 
     setIsLoading(true);
-    setError("");
-
     try {
-      let collectionId = selectedCollection;
-
+      let collectionId;
       if (activeTab === "new") {
-        const newCollectionResponse = await axios.post("/api/collections", { name: newCollectionName.trim() });
-        collectionId = newCollectionResponse.data._id;
-      }
-
-      const promises = selectedProducts.map(productId => 
-        axios.post(`/api/collections/${collectionId}/items/create`, {
-          product_id: productId
-        })
-      );
-      const results = await Promise.all(promises);
-      const responses = results.map(r => r.data);
-      
-      const added = responses.filter(r => r.status === "added").length;
-      const duplicates = responses.filter(r => r.status === "duplicate").length;
-
-      if (added > 0 && duplicates > 0) {
-        toast.success(`Added ${added} product(s) to the collection. ${duplicates} product(s) were already in the collection.`);
-      } else if (added > 0) {
-        toast.success(`Added ${added} product(s) to the collection.`);
-      } else if (duplicates === selectedProducts.length) {
-        toast.warning(`No products added as all ${duplicates} product(s) were already in the collection.`);
+        // Create a new collection
+        const response = await axios.post("/api/collections", { name: newCollectionName, storeId });
+        collectionId = response.data._id;
       } else {
-        toast.error("No products were added to the collection.");
+        collectionId = selectedCollection;
       }
+
+      // Call the onSelectCollection prop function
+      await onSelectCollection(collectionId);
       
-      onProductsAdded();
       onClose();
+      toast.success("Products added to collection successfully");
     } catch (error) {
       console.error("Error adding products to collection:", error);
-      toast.error("An error occurred while adding products to the collection.");
+      setError("Failed to add products to collection. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        onClose();
-        setError("");
-        setNewCollectionName("");
-        setSelectedCollection("");
-      }
-    }}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Products to Collection</DialogTitle>

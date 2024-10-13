@@ -1,0 +1,24 @@
+meta {
+  name: Generate Collection Link
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/collections/{{collectionId}}/generate-link
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:3000
+  collectionId: // Add the collection ID here
+  authToken: // Add your auth token here
+}

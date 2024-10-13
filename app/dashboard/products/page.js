@@ -1,15 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PencilIcon, CheckIcon, TrashIcon, Boxes, Plus } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { PencilIcon, CheckIcon, TrashIcon, Boxes, Plus, Upload } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import AddProductModal from "@/components/AddProductModal";
 import SelectCollectionModal from "@/components/SelectCollectionModal";
+import ExcelUploadModal from "@/components/ExcelUploadModal";
+import ProductTable from "@/components/ProductTable";
 
 export default function ProductsPage() {
   const { data: session } = useSession();
@@ -21,7 +23,9 @@ export default function ProductsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [storeId, setStoreId] = useState(null);
   const [isSelectCollectionOpen, setIsSelectCollectionOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [isExcelUploadOpen, setIsExcelUploadOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState(null);
 
   useEffect(() => {
     const fetchStoreId = async () => {
@@ -48,41 +52,22 @@ export default function ProductsPage() {
   }, [currentPage, searchTerm, storeId]);
 
   const fetchProducts = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(`/api/products?page=${currentPage}&limit=10&search=${searchTerm}`);
-      console.log('API response:', response.data);
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast.error('Error fetching products');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDelete = async (productId) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await axios.delete(`/api/products/${productId}`);
-        toast.success('Product deleted successfully');
-        fetchProducts();
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        toast.error('Error deleting product');
-      }
-    }
-  };
-
-  const handleProductAdded = () => {
+  const handleImportSuccess = () => {
     fetchProducts();
-    setIsAddModalOpen(false);
-  };
-
-  const handleSelectProduct = (productId) => {
-    setSelectedProducts((prevSelected) =>
-      prevSelected.includes(productId)
-        ? prevSelected.filter(id => id !== productId)
-        : [...prevSelected, productId]
-    );
+    setIsExcelUploadOpen(false);
   };
 
   const handleAddToCollectionClick = () => {
@@ -93,41 +78,105 @@ export default function ProductsPage() {
     setIsSelectCollectionOpen(true);
   };
 
-  const handleEdit = (productId) => {
-    if (editingProduct === productId) {
-      // Save the changes
-      handleSaveEdit(productId);
+  const handleProductSelect = (productIds) => {
+    if (Array.isArray(productIds)) {
+      setSelectedProducts(productIds);
     } else {
-      setEditingProduct(productId);
+      setSelectedProducts(prevSelected => {
+        if (prevSelected.includes(productIds)) {
+          return prevSelected.filter(id => id !== productIds);
+        } else {
+          return [...prevSelected, productIds];
+        }
+      });
     }
   };
 
-  const handleSaveEdit = async (productId) => {
+  const handleProductEdit = async (editedProduct) => {
     try {
-      const productToUpdate = products.find(p => p._id === productId);
-      await axios.put(`/api/products/${productId}`, productToUpdate);
-      setEditingProduct(null);
-      toast.success('Product updated successfully');
+      const response = await axios.put(`/api/products/${editedProduct.product_id}`, editedProduct);
+      if (response.status === 200) {
+        toast.success('Product updated successfully');
+        fetchProducts();
+      }
     } catch (error) {
       console.error('Error updating product:', error);
       toast.error('Error updating product');
     }
   };
 
-  const handleInputChange = (productId, field, value) => {
-    setProducts(products.map(p => 
-      p._id === productId ? { ...p, [field]: value } : p
-    ));
+  const handleProductDelete = async (productId) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        const response = await axios.delete(`/api/products/${productId}`);
+        if (response.status === 200) {
+          toast.success('Product deleted successfully');
+          fetchProducts();
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        toast.error('Error deleting product');
+      }
+    }
+  };
+
+  const handleProductAdded = () => {
+    fetchProducts();
+    setIsAddModalOpen(false);
+    toast.success('Product added successfully');
+  };
+
+  const handleAddToCollection = async (collectionId) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/collections/${collectionId}/items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ products: selectedProducts }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to add products to collection');
+      }
+
+      if (data.addedCount > 0) {
+        toast.success(`Added ${data.addedCount} product${data.addedCount !== 1 ? 's' : ''} to the collection`);
+      } else {
+        toast.info('No new products were added to the collection');
+      }
+
+      if (data.alreadyInCollection > 0) {
+        toast.info(`${data.alreadyInCollection} product${data.alreadyInCollection !== 1 ? 's were' : ' was'} already in the collection`);
+      }
+
+      setSelectedProducts([]);
+      setIsSelectCollectionOpen(false);
+    } catch (error) {
+      console.error('Error adding products to collection:', error);
+      toast.error(error.message || 'Failed to add products to collection');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="space-y-4 p-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Product Dashboard</h1>
-        <Button onClick={() => setIsAddModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Product
-        </Button>
+        <div className="space-x-2">
+          <Button onClick={() => setIsAddModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Product
+          </Button>
+          <Button onClick={() => setIsExcelUploadOpen(true)}>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Excel
+          </Button>
+        </div>
       </div>
       
       <div className="flex justify-between items-center">
@@ -148,103 +197,21 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>
-              <input
-                type="checkbox"
-                checked={selectedProducts.length === products.length && products.length > 0}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedProducts(products.map(product => product._id));
-                  } else {
-                    setSelectedProducts([]);
-                  }
-                }}
-              />
-            </TableHead>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Sell Price</TableHead>
-            <TableHead>Inventory</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {products.map((product) => (
-            <TableRow key={product._id}>
-              <TableCell>
-                <input
-                  type="checkbox"
-                  checked={selectedProducts.includes(product._id)}
-                  onChange={() => handleSelectProduct(product._id)}
-                />
-              </TableCell>
-              <TableCell>
-                {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded" />
-                ) : (
-                  <div className="h-12 w-12 bg-gray-300 flex items-center justify-center rounded">
-                    <span className="text-gray-700">No Image</span>
-                  </div>
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    value={product.name}
-                    onChange={(e) => handleInputChange(product._id, 'name', e.target.value)}
-                  />
-                ) : (
-                  product.name
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.sell_price}
-                    onChange={(e) => handleInputChange(product._id, 'sell_price', parseFloat(e.target.value))}
-                  />
-                ) : (
-                  `$${product.sell_price.toFixed(2)}`
-                )}
-              </TableCell>
-              <TableCell>
-                {editingProduct === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.inventory}
-                    onChange={(e) => handleInputChange(product._id, 'inventory', parseInt(e.target.value))}
-                  />
-                ) : (
-                  product.inventory
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(product._id)}>
-                    {editingProduct === product._id ? <CheckIcon className="h-4 w-4" /> : <PencilIcon className="h-4 w-4" />}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(product._id)}>
-                    <TrashIcon className="h-4 w-4 mr-1" />
-                    Delete
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
-      {products.length === 0 && (
-        <div className="text-center py-4 text-gray-500">
-          No products found. Add a new product to get started.
-        </div>
+      {isLoading ? (
+        <div className="text-center py-4">Loading products...</div>
+      ) : (
+        <Suspense fallback={<div className="text-center py-4">Loading products...</div>}>
+          <ProductTable
+            data={products}
+            onProductSelect={handleProductSelect}
+            selectedProducts={selectedProducts}
+            onProductEdit={handleProductEdit}
+            onProductDelete={handleProductDelete}
+          />
+        </Suspense>
       )}
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-4">
         <Button
           onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
           disabled={currentPage === 1}
@@ -272,6 +239,13 @@ export default function ProductsPage() {
         onClose={() => setIsSelectCollectionOpen(false)}
         selectedProducts={selectedProducts}
         storeId={storeId}
+        onSelectCollection={handleAddToCollection}
+      />
+
+      <ExcelUploadModal
+        isOpen={isExcelUploadOpen}
+        onClose={() => setIsExcelUploadOpen(false)}
+        onImportSuccess={handleImportSuccess}
       />
     </div>
   );
