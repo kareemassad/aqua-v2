@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const PaymentsPage = () => {
-  const [payments, setPayments] = useState([]);
+  const [payments, setPayments] = useState([])
 
   const fetchPayments = async () => {
     try {
-      const response = await axios.get("/api/payments");
-      setPayments(response.data.payments);
+      const response = await axios.get('/api/payments')
+      setPayments(response.data.payments)
     } catch (error) {
-      console.error("Error fetching payments:", error);
+      console.error('Error fetching payments:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchPayments();
-  }, []);
+    fetchPayments()
+  }, [])
 
   return (
     <div>
@@ -36,7 +36,7 @@ const PaymentsPage = () => {
           {payments.map((payment) => (
             <tr key={payment._id}>
               <td>{payment.user_id.name}</td> {/* Populated User Name */}
-              <td>{payment.subscription_id.name}</td>{" "}
+              <td>{payment.subscription_id.name}</td>{' '}
               {/* Populated Subscription Name */}
               <td>${payment.amount.toFixed(2)}</td>
               <td>{payment.status}</td>
@@ -46,7 +46,7 @@ const PaymentsPage = () => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default PaymentsPage;
+export default PaymentsPage

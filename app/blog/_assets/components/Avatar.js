@@ -1,5 +1,5 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link'
+import Image from 'next/image'
 
 // This is the author avatar that appears in the article page and in <CardArticle /> component
 const Avatar = ({ article }) => {
@@ -22,7 +22,7 @@ const Avatar = ({ article }) => {
       </span>
       <span className="group-hover:underline">{article.author.name}</span>
     </Link>
-  );
-};
+  )
+}
 
-export default Avatar;
+export default Avatar

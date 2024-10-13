@@ -1,31 +1,31 @@
 // npx tsx scripts/seed.mjs
 
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-import { MongoClient, ObjectId } from "mongodb";
-import { v4 as uuidv4 } from "uuid";
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { MongoClient, ObjectId } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Load environment variables from .env.local
-dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') })
 
 async function seedDatabase() {
-  const client = new MongoClient(process.env.MONGODB_URI);
+  const client = new MongoClient(process.env.MONGODB_URI)
 
   try {
-    await client.connect();
-    console.log("Connected to MongoDB");
+    await client.connect()
+    console.log('Connected to MongoDB')
 
-    const db = client.db();
+    const db = client.db()
 
     // Clear existing data
-    const collections = ["users", "accounts", "stores", "products"];
+    const collections = ['users', 'accounts', 'stores', 'products']
     for (const collectionName of collections) {
-      await db.collection(collectionName).deleteMany({});
-      console.log(`Cleared ${collectionName} collection`);
+      await db.collection(collectionName).deleteMany({})
+      console.log(`Cleared ${collectionName} collection`)
     }
 
     // Seed Users
@@ -101,11 +101,11 @@ async function seedDatabase() {
 		console.log("Database seeding completed successfully");
 		*/
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error('Error seeding database:', error)
   } finally {
-    await client.close();
-    process.exit();
+    await client.close()
+    process.exit()
   }
 }
 
-seedDatabase();
+seedDatabase()

@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 
 const Hero = () => {
   return (
@@ -32,7 +32,7 @@ const Hero = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Hero;
+export default Hero

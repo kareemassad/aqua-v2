@@ -1,149 +1,149 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  TableRow
+} from '@/components/ui/table'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Link, Search, Plus, Edit } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Boxes } from "lucide-react";
-import { toast } from "react-toastify";
-import SelectCollectionModal from "@/components/SelectCollectionModal";
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Trash2, Link, Search, Plus, Edit } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { Boxes } from 'lucide-react'
+import { toast } from 'react-toastify'
+import SelectCollectionModal from '@/components/SelectCollectionModal'
 
 export default function CollectionsPage() {
-  const [collections, setCollections] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
-  const [editingCollection, setEditingCollection] = useState(null);
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [productSearchTerm, setProductSearchTerm] = useState("");
-  const [collectionSearchTerms, setCollectionSearchTerms] = useState({});
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const [collections, setCollections] = useState([])
+  const [allProducts, setAllProducts] = useState([])
+  const [editingCollection, setEditingCollection] = useState(null)
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false)
+  const [selectedProducts, setSelectedProducts] = useState([])
+  const [productSearchTerm, setProductSearchTerm] = useState('')
+  const [collectionSearchTerms, setCollectionSearchTerms] = useState({})
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [isSelectCollectionModalOpen, setIsSelectCollectionModalOpen] =
-    useState(false);
-  const [selectedProductIds, setSelectedProductIds] = useState([]);
+    useState(false)
+  const [selectedProductIds, setSelectedProductIds] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
-      if (status === "authenticated") {
-        await fetchCollections();
-        await fetchAllProducts();
+      if (status === 'authenticated') {
+        await fetchCollections()
+        await fetchAllProducts()
       }
-    };
-    fetchData();
-  }, [status]);
+    }
+    fetchData()
+  }, [status])
 
   const fetchCollections = async () => {
     try {
-      const response = await fetch("/api/collections");
+      const response = await fetch('/api/collections')
       if (response.ok) {
-        const data = await response.json();
-        console.log("Fetched collections:", data);
-        setCollections(data.collections || []);
+        const data = await response.json()
+        console.log('Fetched collections:', data)
+        setCollections(data.collections || [])
       } else {
-        console.error("Failed to fetch collections:", await response.text());
-        toast.error("Failed to fetch collections");
+        console.error('Failed to fetch collections:', await response.text())
+        toast.error('Failed to fetch collections')
       }
     } catch (error) {
-      console.error("Error fetching collections:", error);
-      toast.error("Error fetching collections");
+      console.error('Error fetching collections:', error)
+      toast.error('Error fetching collections')
     }
-  };
+  }
 
   const fetchAllProducts = async () => {
     try {
-      const response = await fetch("/api/products");
+      const response = await fetch('/api/products')
       if (response.ok) {
-        const data = await response.json();
-        setAllProducts(data.products || []);
+        const data = await response.json()
+        setAllProducts(data.products || [])
       } else {
-        console.error("Failed to fetch products:", await response.text());
-        toast.error("Failed to fetch products");
+        console.error('Failed to fetch products:', await response.text())
+        toast.error('Failed to fetch products')
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
-      toast.error("Error fetching products");
+      console.error('Error fetching products:', error)
+      toast.error('Error fetching products')
     }
-  };
+  }
 
   const handleRenameCollection = async (id, newName) => {
     try {
-      if (id === "new") {
-        const response = await fetch("/api/collections", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: newName }),
-        });
+      if (id === 'new') {
+        const response = await fetch('/api/collections', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName })
+        })
         if (response.ok) {
-          const newCollection = await response.json();
+          const newCollection = await response.json()
           setCollections((prevCollections) => [
             newCollection,
-            ...prevCollections,
-          ]);
-          toast.success("New collection created successfully");
+            ...prevCollections
+          ])
+          toast.success('New collection created successfully')
         } else {
-          console.error("Failed to create collection:", await response.text());
-          toast.error("Failed to create new collection");
+          console.error('Failed to create collection:', await response.text())
+          toast.error('Failed to create new collection')
         }
       } else {
         const response = await fetch(`/api/collections/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: newName }),
-        });
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName })
+        })
         if (response.ok) {
           setCollections((prevCollections) =>
             prevCollections.map((collection) =>
               collection._id === id
                 ? { ...collection, name: newName }
-                : collection,
-            ),
-          );
-          toast.success("Collection renamed successfully");
+                : collection
+            )
+          )
+          toast.success('Collection renamed successfully')
         } else {
-          console.error("Failed to rename collection:", await response.text());
-          toast.error("Failed to rename collection");
+          console.error('Failed to rename collection:', await response.text())
+          toast.error('Failed to rename collection')
         }
       }
     } catch (error) {
-      console.error("Error handling collection rename:", error);
-      toast.error("An error occurred while managing the collection");
+      console.error('Error handling collection rename:', error)
+      toast.error('An error occurred while managing the collection')
     }
-    setEditingCollection(null);
-  };
+    setEditingCollection(null)
+  }
 
   const handleDeleteCollection = async (id) => {
     const response = await fetch(`/api/collections/${id}`, {
-      method: "DELETE",
-    });
+      method: 'DELETE'
+    })
     if (response.ok) {
-      setCollections(collections.filter((collection) => collection._id !== id));
+      setCollections(collections.filter((collection) => collection._id !== id))
     }
-  };
+  }
 
   const handleRemoveProduct = async (collectionId, productId) => {
     const response = await fetch(
       `/api/collections/${collectionId}/items/${productId}`,
-      { method: "DELETE" },
-    );
+      { method: 'DELETE' }
+    )
     if (response.ok) {
       setCollections(
         collections.map((collection) =>
@@ -151,75 +151,75 @@ export default function CollectionsPage() {
             ? {
                 ...collection,
                 products: collection.products.filter(
-                  (product) => product._id !== productId,
-                ),
+                  (product) => product._id !== productId
+                )
               }
-            : collection,
-        ),
-      );
+            : collection
+        )
+      )
     }
-  };
+  }
 
   const handleAddProducts = async (collectionId) => {
     try {
       const promises = selectedProducts.map((product) =>
         fetch(`/api/collections/${collectionId}/items/create`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ product_id: product._id }),
-        }),
-      );
-      const results = await Promise.all(promises);
-      const responses = await Promise.all(results.map((r) => r.json()));
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product_id: product._id })
+        })
+      )
+      const results = await Promise.all(promises)
+      const responses = await Promise.all(results.map((r) => r.json()))
 
-      const added = responses.filter((r) => r.status === "added").length;
+      const added = responses.filter((r) => r.status === 'added').length
       const duplicates = responses.filter(
-        (r) => r.status === "duplicate",
-      ).length;
+        (r) => r.status === 'duplicate'
+      ).length
 
       if (added > 0 && duplicates > 0) {
         toast.info(
-          `Added ${added} product(s). ${duplicates} product(s) were already in the collection.`,
-        );
+          `Added ${added} product(s). ${duplicates} product(s) were already in the collection.`
+        )
       } else if (added > 0) {
-        toast.success(`Added ${added} product(s) to the collection.`);
+        toast.success(`Added ${added} product(s) to the collection.`)
       } else if (duplicates > 0) {
         toast.warning(
-          `All ${duplicates} product(s) were already in the collection.`,
-        );
+          `All ${duplicates} product(s) were already in the collection.`
+        )
       }
 
-      await fetchCollections(); // Refresh the collections after adding products
-      setSelectedProducts([]);
-      setIsAddProductModalOpen(false);
+      await fetchCollections() // Refresh the collections after adding products
+      setSelectedProducts([])
+      setIsAddProductModalOpen(false)
     } catch (error) {
-      console.error("Error adding products to collection:", error);
-      toast.error("An error occurred while adding products to the collection.");
+      console.error('Error adding products to collection:', error)
+      toast.error('An error occurred while adding products to the collection.')
     }
-  };
+  }
 
   const handleGenerateLink = async (collectionId) => {
     const response = await fetch(
       `/api/collections/${collectionId}/generate-link`,
-      { method: "POST" },
-    );
+      { method: 'POST' }
+    )
     if (response.ok) {
-      const { uniqueLink } = await response.json();
-      console.log(`Unique link generated: ${uniqueLink}`);
+      const { uniqueLink } = await response.json()
+      console.log(`Unique link generated: ${uniqueLink}`)
       // Optionally, display the link to the user
-      toast.success("Unique link generated successfully!");
+      toast.success('Unique link generated successfully!')
     } else {
-      const errorData = await response.json();
-      toast.error(errorData.error || "Failed to generate unique link");
+      const errorData = await response.json()
+      toast.error(errorData.error || 'Failed to generate unique link')
     }
-  };
+  }
 
   const handleCollectionSearch = (collectionId, searchTerm) => {
     setCollectionSearchTerms({
       ...collectionSearchTerms,
-      [collectionId]: searchTerm,
-    });
-  };
+      [collectionId]: searchTerm
+    })
+  }
 
   const filteredCollections = collections.map((collection) => ({
     ...collection,
@@ -228,42 +228,42 @@ export default function CollectionsPage() {
           product.name
             .toLowerCase()
             .includes(
-              (collectionSearchTerms[collection._id] || "").toLowerCase(),
-            ),
+              (collectionSearchTerms[collection._id] || '').toLowerCase()
+            )
         )
-      : [],
-  }));
+      : []
+  }))
 
   const filteredProducts = allProducts.filter((product) =>
-    product.name.toLowerCase().includes(productSearchTerm.toLowerCase()),
-  );
+    product.name.toLowerCase().includes(productSearchTerm.toLowerCase())
+  )
 
   const handleProductSelect = (productId) => {
     setSelectedProductIds((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
-        : [...prev, productId],
-    );
-  };
+        : [...prev, productId]
+    )
+  }
 
   const handleAddToCollectionClick = () => {
     if (selectedProductIds.length === 0) {
-      toast.error("Please select at least one product to add to a collection.");
-      return;
+      toast.error('Please select at least one product to add to a collection.')
+      return
     }
-    setIsSelectCollectionModalOpen(true);
-  };
+    setIsSelectCollectionModalOpen(true)
+  }
 
   const handleProductsAdded = () => {
-    fetchCollections();
-    setSelectedProductIds([]);
-  };
+    fetchCollections()
+    setSelectedProductIds([])
+  }
 
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Collections</h1>
-        <Button onClick={() => handleRenameCollection("new", "New Collection")}>
+        <Button onClick={() => handleRenameCollection('new', 'New Collection')}>
           <Plus className="mr-2 h-4 w-4" /> New Collection
         </Button>
       </div>
@@ -310,7 +310,7 @@ export default function CollectionsPage() {
                 <Input
                   type="text"
                   placeholder="Search products in this collection..."
-                  value={collectionSearchTerms[collection._id] || ""}
+                  value={collectionSearchTerms[collection._id] || ''}
                   onChange={(e) =>
                     handleCollectionSearch(collection._id, e.target.value)
                   }
@@ -380,16 +380,16 @@ export default function CollectionsPage() {
                           <Checkbox
                             id={`product-${product._id}`}
                             checked={selectedProducts.some(
-                              (p) => p._id === product._id,
+                              (p) => p._id === product._id
                             )}
                             onCheckedChange={(checked) => {
                               setSelectedProducts(
                                 checked
                                   ? [...selectedProducts, product]
                                   : selectedProducts.filter(
-                                      (p) => p._id !== product._id,
-                                    ),
-                              );
+                                      (p) => p._id !== product._id
+                                    )
+                              )
                             }}
                           />
                           <label
@@ -434,5 +434,5 @@ export default function CollectionsPage() {
         onProductsAdded={handleProductsAdded}
       />
     </div>
-  );
+  )
 }

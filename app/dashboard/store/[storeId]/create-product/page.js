@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { toast } from "react-toastify";
-import { Button } from "@/components/ui/button";
-import AddProductModal from "@/components/AddProductModal";
+import { useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
+import { toast } from 'react-toastify'
+import { Button } from '@/components/ui/button'
+import AddProductModal from '@/components/AddProductModal'
 
 const CreateProduct = () => {
-  const params = useParams();
-  const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const params = useParams()
+  const router = useRouter()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleProductAdded = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false)
     // Optionally, refresh the product list or perform other actions
-    toast.success("Product created successfully");
-    router.push(`/dashboard/stores/${params.storeId}/products`);
-  };
+    toast.success('Product created successfully')
+    router.push(`/dashboard/stores/${params.storeId}/products`)
+  }
 
   return (
     <main className="max-w-md mx-auto p-4">
@@ -31,7 +31,7 @@ const CreateProduct = () => {
         storeId={params.storeId}
       />
     </main>
-  );
-};
+  )
+}
 
-export default CreateProduct;
+export default CreateProduct

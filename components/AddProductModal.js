@@ -1,62 +1,62 @@
-import { useState } from "react";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useState } from 'react'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import ImageDropZone from "@/components/uploadthing/ImageDropZone";
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import ImageDropZone from '@/components/uploadthing/ImageDropZone'
 
 export default function AddProductModal({
   isOpen,
   onClose,
   onProductAdded,
-  storeId,
+  storeId
 }) {
   const [form, setForm] = useState({
-    name: "",
-    cost_price: "",
-    sell_price: "",
+    name: '',
+    cost_price: '',
+    sell_price: '',
     inventory: 0,
-    description: "",
-    image: "",
-  });
-  const [imageUrl, setImageUrl] = useState("");
+    description: '',
+    image: ''
+  })
+  const [imageUrl, setImageUrl] = useState('')
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleUploadSuccess = ({ type, url }) => {
-    if (type === "image") {
-      setImageUrl(url);
+    if (type === 'image') {
+      setImageUrl(url)
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const payload = {
       ...form,
       store_id: storeId,
-      image: imageUrl,
-    };
+      image: imageUrl
+    }
 
     try {
-      const response = await axios.post("/api/products/create", payload);
-      toast.success("Product created successfully");
-      onProductAdded();
-      onClose();
+      const response = await axios.post('/api/products/create', payload)
+      toast.success('Product created successfully')
+      onProductAdded()
+      onClose()
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to create product");
+      toast.error(error.response?.data?.error || 'Failed to create product')
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -137,5 +137,5 @@ export default function AddProductModal({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

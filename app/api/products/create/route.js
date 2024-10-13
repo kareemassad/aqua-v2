@@ -1,28 +1,28 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import connectMongo from "@/lib/mongoose";
-import Product from "@/models/Product";
-import Store from "@/models/Store";
-import { authOptions } from "@/lib/next-auth";
-import validator from "validator";
-import { v4 as uuidv4 } from "uuid";
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import connectMongo from '@/lib/mongoose'
+import Product from '@/models/Product'
+import Store from '@/models/Store'
+import { authOptions } from '@/lib/next-auth'
+import validator from 'validator'
+import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
 
   // Log the session data
-  console.log("Session Data:", session);
+  console.log('Session Data:', session)
 
   if (!session) {
-    console.error("Unauthorized: No valid session");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    console.error('Unauthorized: No valid session')
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  await connectMongo();
+  await connectMongo()
 
   try {
-    const payload = await request.json();
-    console.log("Received payload for product creation:", payload);
+    const payload = await request.json()
+    console.log('Received payload for product creation:', payload)
 
     const {
       name,
@@ -32,8 +32,8 @@ export async function POST(request) {
       description,
       store_id,
       image,
-      id_number,
-    } = payload;
+      id_number
+    } = payload
 
     // Validate required fields
     if (
@@ -43,36 +43,36 @@ export async function POST(request) {
       inventory == null ||
       !store_id
     ) {
-      console.warn("Missing required fields");
+      console.warn('Missing required fields')
       return NextResponse.json(
         {
           error:
-            "Missing required fields: name, cost_price, sell_price, inventory, store_id",
+            'Missing required fields: name, cost_price, sell_price, inventory, store_id'
         },
-        { status: 400 },
-      );
+        { status: 400 }
+      )
     }
 
     // Parse numerical values
-    const parsedCostPrice = parseFloat(cost_price);
-    const parsedSellPrice = parseFloat(sell_price);
-    const parsedInventory = parseInt(inventory, 10);
+    const parsedCostPrice = parseFloat(cost_price)
+    const parsedSellPrice = parseFloat(sell_price)
+    const parsedInventory = parseInt(inventory, 10)
 
     // Validate data types
     if (
-      typeof name !== "string" ||
+      typeof name !== 'string' ||
       isNaN(parsedCostPrice) ||
       isNaN(parsedSellPrice) ||
       isNaN(parsedInventory)
     ) {
-      console.warn("Invalid data types for fields");
+      console.warn('Invalid data types for fields')
       return NextResponse.json(
         {
           error:
-            "Invalid data types for fields: name must be string, cost_price, sell_price, inventory must be valid numbers",
+            'Invalid data types for fields: name must be string, cost_price, sell_price, inventory must be valid numbers'
         },
-        { status: 400 },
-      );
+        { status: 400 }
+      )
     }
 
     // Additional Validation: Ensure numerical fields are valid numbers
@@ -81,51 +81,51 @@ export async function POST(request) {
       !Number.isFinite(parsedSellPrice) ||
       !Number.isInteger(parsedInventory)
     ) {
-      console.warn("Invalid numerical values");
+      console.warn('Invalid numerical values')
       return NextResponse.json(
         {
           error:
-            "Invalid numerical values for cost_price, sell_price, or inventory",
+            'Invalid numerical values for cost_price, sell_price, or inventory'
         },
-        { status: 400 },
-      );
+        { status: 400 }
+      )
     }
 
     // Optional fields validation
     const sanitizedDescription = description
       ? validator.escape(description.toString())
-      : "";
+      : ''
     const sanitizedIdNumber = id_number
       ? validator.escape(id_number.toString())
-      : uuidv4(); // Generate if not provided
-    const sanitizedImage = image ? validator.escape(image.toString()) : "";
+      : uuidv4() // Generate if not provided
+    const sanitizedImage = image ? validator.escape(image.toString()) : ''
 
     // Check for duplicate products based on unique identifier (id_number)
     if (sanitizedIdNumber) {
       const existingProduct = await Product.findOne({
         store_id: store_id,
-        id_number: sanitizedIdNumber,
-      });
+        id_number: sanitizedIdNumber
+      })
       if (existingProduct) {
-        console.warn("Duplicate product based on id_number");
+        console.warn('Duplicate product based on id_number')
         return NextResponse.json(
-          { error: "Duplicate product based on id_number" },
-          { status: 409 },
-        );
+          { error: 'Duplicate product based on id_number' },
+          { status: 409 }
+        )
       }
     }
 
     // Ensure store exists and belongs to the user
-    console.log("Searching for store with user_id:", session.user.id);
-    const store = await Store.findOne({ user_id: session.user.id });
-    console.log("Store lookup result:", store);
+    console.log('Searching for store with user_id:', session.user.id)
+    const store = await Store.findOne({ user_id: session.user.id })
+    console.log('Store lookup result:', store)
 
     if (!store) {
-      console.warn("Store not found or unauthorized");
+      console.warn('Store not found or unauthorized')
       return NextResponse.json(
-        { error: "Store not found or unauthorized" },
-        { status: 404 },
-      );
+        { error: 'Store not found or unauthorized' },
+        { status: 404 }
+      )
     }
 
     // Create new product with backend-assigned ID and id_number
@@ -138,19 +138,19 @@ export async function POST(request) {
       description: sanitizedDescription,
       id_number: sanitizedIdNumber,
       image: sanitizedImage,
-      product_id: uuidv4(), // Backend-assigned ID
-    });
+      product_id: uuidv4() // Backend-assigned ID
+    })
 
-    console.log("Product created successfully:", newProduct);
+    console.log('Product created successfully:', newProduct)
     return NextResponse.json(
-      { message: "Product created successfully", product: newProduct },
-      { status: 201 },
-    );
+      { message: 'Product created successfully', product: newProduct },
+      { status: 201 }
+    )
   } catch (error) {
-    console.error("Error creating product:", error);
+    console.error('Error creating product:', error)
     return NextResponse.json(
-      { error: "Error creating product" },
-      { status: 500 },
-    );
+      { error: 'Error creating product' },
+      { status: 500 }
+    )
   }
 }

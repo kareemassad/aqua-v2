@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import toJSON from "./plugins/toJSON";
+import mongoose from 'mongoose'
+import toJSON from './plugins/toJSON'
 
 // LEAD SCHEMA is used to store the leads that are generated from the landing page.
 // You would use this if your product isn't ready yet and you want to collect emails
@@ -11,16 +11,16 @@ const leadSchema = mongoose.Schema(
       trim: true,
       lowercase: true,
       private: true,
-      required: true,
-    },
+      required: true
+    }
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-  },
-);
+    toJSON: { virtuals: true }
+  }
+)
 
 // add plugin that converts mongoose to json
-leadSchema.plugin(toJSON);
+leadSchema.plugin(toJSON)
 
-export default mongoose.models.Lead || mongoose.model("Lead", leadSchema);
+export default mongoose.models.Lead || mongoose.model('Lead', leadSchema)

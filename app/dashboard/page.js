@@ -1,62 +1,62 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useSession } from "next-auth/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useSession } from 'next-auth/react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   BarChart,
   Package,
   Link as LinkIcon,
   CreditCard,
-  Settings,
-} from "lucide-react";
-import Link from "next/link";
-import { toast } from "react-toastify";
+  Settings
+} from 'lucide-react'
+import Link from 'next/link'
+import { toast } from 'react-toastify'
 
 export default function Dashboard() {
-  const { data: session, status } = useSession();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession()
+  const [dashboardData, setDashboardData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState({
     productCount: 0,
     activeLinks: 0,
     pendingOrders: 0,
     totalSales: 0,
-    email: "",
-    storeName: "",
-  });
+    email: '',
+    storeName: ''
+  })
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      if (status === "authenticated" && session?.user?.id) {
+      if (status === 'authenticated' && session?.user?.id) {
         try {
-          setIsLoading(true);
-          const response = await axios.get(`/api/dashboard`);
-          setDashboardData(response.data);
+          setIsLoading(true)
+          const response = await axios.get(`/api/dashboard`)
+          setDashboardData(response.data)
           setUser((prevUser) => ({
             ...prevUser,
             email: response.data.user.email,
             storeName: response.data.store.name,
-            productCount: response.data.store.productCount,
-          }));
+            productCount: response.data.store.productCount
+          }))
         } catch (error) {
-          console.error("Error fetching dashboard data:", error);
-          toast.error("Failed to load dashboard data. Please try again.");
+          console.error('Error fetching dashboard data:', error)
+          toast.error('Failed to load dashboard data. Please try again.')
         } finally {
-          setIsLoading(false);
+          setIsLoading(false)
         }
       }
-    };
+    }
 
-    fetchDashboardData();
-  }, [session, status]);
+    fetchDashboardData()
+  }, [session, status])
 
-  if (status === "loading" || isLoading) return <div>Loading...</div>;
-  if (!session) return <div>Please sign in to view the dashboard.</div>;
+  if (status === 'loading' || isLoading) return <div>Loading...</div>
+  if (!session) return <div>Please sign in to view the dashboard.</div>
   if (!dashboardData)
-    return <div>No data found. Please try refreshing the page.</div>;
+    return <div>No data found. Please try refreshing the page.</div>
 
   // Render your dashboard content here using the dashboardData state
   return (
@@ -146,5 +146,5 @@ export default function Dashboard() {
         </Card>
       </div>
     </>
-  );
+  )
 }

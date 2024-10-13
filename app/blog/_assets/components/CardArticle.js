@@ -1,16 +1,16 @@
-import Link from "next/link";
-import Image from "next/image";
-import BadgeCategory from "./BadgeCategory";
-import Avatar from "./Avatar";
+import Link from 'next/link'
+import Image from 'next/image'
+import BadgeCategory from './BadgeCategory'
+import Avatar from './Avatar'
 
 // This is the article card that appears in the home page, in the category page, and in the author's page
 const CardArticle = ({
   article,
-  tag = "h2",
+  tag = 'h2',
   showCategory = true,
-  isImagePriority = false,
+  isImagePriority = false
 }) => {
-  const TitleTag = tag;
+  const TitleTag = tag
 
   return (
     <article className="card bg-base-200 rounded-box overflow-hidden">
@@ -65,16 +65,16 @@ const CardArticle = ({
             <Avatar article={article} />
 
             <span itemProp="datePublished">
-              {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
+              {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric'
               })}
             </span>
           </div>
         </div>
       </div>
     </article>
-  );
-};
+  )
+}
 
-export default CardArticle;
+export default CardArticle

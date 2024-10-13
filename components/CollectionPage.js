@@ -1,58 +1,58 @@
-"use client";
+'use client'
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
+import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 export default function CollectionPage({ collection }) {
-  const router = useRouter();
-  const params = useParams();
-  const { linkId } = params;
-  const [collectionState, setCollectionState] = useState(null);
-  const [error, setError] = useState(null);
+  const router = useRouter()
+  const params = useParams()
+  const { linkId } = params
+  const [collectionState, setCollectionState] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchCollection = async () => {
       try {
-        const response = await axios.get(`/api/collections/link/${linkId}`);
-        setCollectionState(response.data.collection);
+        const response = await axios.get(`/api/collections/link/${linkId}`)
+        setCollectionState(response.data.collection)
       } catch (err) {
-        setError("Collection not found or invalid link.");
+        setError('Collection not found or invalid link.')
       }
-    };
+    }
 
-    fetchCollection();
-  }, [linkId]);
+    fetchCollection()
+  }, [linkId])
 
-  if (error) return <div>{error}</div>;
-  if (!collectionState) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>
+  if (!collectionState) return <div>Loading...</div>
 
   const handleDeleteProduct = async (productId) => {
     try {
       const response = await fetch(
         `/api/collections/${collectionState._id}/items/${productId}`,
         {
-          method: "DELETE",
-        },
-      );
+          method: 'DELETE'
+        }
+      )
       if (response.ok) {
-        toast.success("Product removed from collection.");
+        toast.success('Product removed from collection.')
         // Optionally, refresh the page or update state
-        router.refresh();
+        router.refresh()
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || "Failed to remove product.");
+        const errorData = await response.json()
+        toast.error(errorData.error || 'Failed to remove product.')
       }
     } catch (error) {
-      console.error("Error removing product:", error);
-      toast.error("An error occurred while removing the product.");
+      console.error('Error removing product:', error)
+      toast.error('An error occurred while removing the product.')
     }
-  };
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -82,5 +82,5 @@ export default function CollectionPage({ collection }) {
         </ul>
       )}
     </div>
-  );
+  )
 }

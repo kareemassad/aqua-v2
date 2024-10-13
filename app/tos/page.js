@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { getSEOTags } from "@/lib/seo";
-import config from "@/config";
+import Link from 'next/link'
+import { getSEOTags } from '@/lib/seo'
+import config from '@/config'
 
 // CHATGPT PROMPT TO GENERATE YOUR TERMS & SERVICES — replace with your own data 👇
 
@@ -27,8 +27,8 @@ import config from "@/config";
 
 export const metadata = getSEOTags({
   title: `Terms and Conditions | ${config.appName}`,
-  canonicalUrlRelative: "/tos",
-});
+  canonicalUrlRelative: '/tos'
+})
 
 const TOS = () => {
   return (
@@ -55,7 +55,7 @@ const TOS = () => {
 
         <pre
           className="leading-relaxed whitespace-pre-wrap"
-          style={{ fontFamily: "sans-serif" }}
+          style={{ fontFamily: 'sans-serif' }}
         >
           {`Last Updated: September 26, 2023
 
@@ -93,7 +93,7 @@ Thank you for using ShipFast!`}
         </pre>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default TOS;
+export default TOS

@@ -1,13 +1,13 @@
-import Link from "next/link";
-import Script from "next/script";
-import { articles } from "../_assets/content";
-import BadgeCategory from "../_assets/components/BadgeCategory";
-import Avatar from "../_assets/components/Avatar";
-import { getSEOTags } from "@/lib/seo";
-import config from "@/config";
+import Link from 'next/link'
+import Script from 'next/script'
+import { articles } from '../_assets/content'
+import BadgeCategory from '../_assets/components/BadgeCategory'
+import Avatar from '../_assets/components/Avatar'
+import { getSEOTags } from '@/lib/seo'
+import config from '@/config'
 
 export async function generateMetadata({ params }) {
-  const article = articles.find((article) => article.slug === params.articleId);
+  const article = articles.find((article) => article.slug === params.articleId)
 
   return getSEOTags({
     title: article.title,
@@ -22,28 +22,28 @@ export async function generateMetadata({ params }) {
           {
             url: article.image.urlRelative,
             width: 1200,
-            height: 660,
-          },
+            height: 660
+          }
         ],
-        locale: "en_US",
-        type: "website",
-      },
-    },
-  });
+        locale: 'en_US',
+        type: 'website'
+      }
+    }
+  })
 }
 
 export default async function Article({ params }) {
-  const article = articles.find((article) => article.slug === params.articleId);
+  const article = articles.find((article) => article.slug === params.articleId)
   const articlesRelated = articles
     .filter(
       (a) =>
         a.slug !== params.articleId &&
         a.categories.some((c) =>
-          article.categories.map((c) => c.slug).includes(c.slug),
-        ),
+          article.categories.map((c) => c.slug).includes(c.slug)
+        )
     )
     .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
-    .slice(0, 3);
+    .slice(0, 3)
 
   return (
     <>
@@ -53,11 +53,11 @@ export default async function Article({ params }) {
         id={`json-ld-article-${article.slug}`}
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
+            '@context': 'https://schema.org',
+            '@type': 'Article',
             mainEntityOfPage: {
-              "@type": "WebPage",
-              "@id": `https://${config.domainName}/blog/${article.slug}`,
+              '@type': 'WebPage',
+              '@id': `https://${config.domainName}/blog/${article.slug}`
             },
             name: article.title,
             headline: article.title,
@@ -66,10 +66,10 @@ export default async function Article({ params }) {
             datePublished: article.publishedAt,
             dateModified: article.publishedAt,
             author: {
-              "@type": "Person",
-              name: article.author.name,
-            },
-          }),
+              '@type': 'Person',
+              name: article.author.name
+            }
+          })
         }}
       />
 
@@ -108,10 +108,10 @@ export default async function Article({ params }) {
               />
             ))}
             <span className="text-base-content/80" itemProp="datePublished">
-              {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
+              {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
               })}
             </span>
           </div>
@@ -168,5 +168,5 @@ export default async function Article({ params }) {
         </div>
       </article>
     </>
-  );
+  )
 }

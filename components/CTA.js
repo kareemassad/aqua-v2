@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 
 const CTA = () => {
   return (
@@ -31,7 +31,7 @@ const CTA = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default CTA;
+export default CTA

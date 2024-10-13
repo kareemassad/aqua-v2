@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Popover, Transition } from "@headlessui/react";
-import { useSession, signOut } from "next-auth/react";
-import apiClient from "@/lib/api";
+import { useState } from 'react'
+import { Popover, Transition } from '@headlessui/react'
+import { useSession, signOut } from 'next-auth/react'
+import apiClient from '@/lib/api'
 
 // A button to show user some account actions
 //  1. Billing: open a Stripe Customer Portal to manage their billing (cancel subscription, update payment method, etc.).
@@ -13,30 +13,30 @@ import apiClient from "@/lib/api";
 //  2. Logout: sign out and go back to homepage
 // See more at https://shipfa.st/docs/components/buttonAccount
 const ButtonAccount = () => {
-  const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
-  };
+    signOut({ callbackUrl: '/' })
+  }
   const handleBilling = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const { url } = await apiClient.post("/stripe/create-portal", {
-        returnUrl: window.location.href,
-      });
+      const { url } = await apiClient.post('/stripe/create-portal', {
+        returnUrl: window.location.href
+      })
 
-      window.location.href = url;
+      window.location.href = url
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
 
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   // Don't show anything if not authenticated (we don't have any info about the user)
-  if (status === "unauthenticated") return null;
+  if (status === 'unauthenticated') return null
 
   return (
     <Popover className="relative z-10">
@@ -46,7 +46,7 @@ const ButtonAccount = () => {
             {session?.user?.image ? (
               <img
                 src={session?.user?.image}
-                alt={session?.user?.name || "Account"}
+                alt={session?.user?.name || 'Account'}
                 className="w-6 h-6 rounded-full shrink-0"
                 referrerPolicy="no-referrer"
                 width={24}
@@ -59,7 +59,7 @@ const ButtonAccount = () => {
               </span>
             )}
 
-            {session?.user?.name || "Account"}
+            {session?.user?.name || 'Account'}
 
             {isLoading ? (
               <span className="loading loading-spinner loading-xs"></span>
@@ -69,7 +69,7 @@ const ButtonAccount = () => {
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 className={`w-5 h-5 duration-200 opacity-50 ${
-                  open ? "transform rotate-180 " : ""
+                  open ? 'transform rotate-180 ' : ''
                 }`}
               >
                 <path
@@ -139,7 +139,7 @@ const ButtonAccount = () => {
         </>
       )}
     </Popover>
-  );
-};
+  )
+}
 
-export default ButtonAccount;
+export default ButtonAccount

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image'
 
 // A one or two sentences testimonial from a customer.
 // Highlight the outcome for your customer (how did your product changed her/his life?) or the pain it's removing — Use <span className="bg-warning/25 px-1.5"> to highlight a part of the sentence
@@ -27,7 +27,7 @@ const Testimonial1Small = () => {
           <p>
             <span className="bg-warning/25 px-1.5">
               I don&apos;t want to pay Stripe $2 for every invoice.
-            </span>{" "}
+            </span>{' '}
             I don&apos;t want to spend 10 minutes manually crafting every
             invoice either.
           </p>
@@ -51,7 +51,7 @@ const Testimonial1Small = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Testimonial1Small;
+export default Testimonial1Small

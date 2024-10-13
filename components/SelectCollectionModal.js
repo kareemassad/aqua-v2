@@ -1,113 +1,113 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+  DialogFooter
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  SelectValue
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function SelectCollectionModal({
   isOpen,
   onClose,
   selectedProducts,
   storeId,
-  onSelectCollection,
+  onSelectCollection
 }) {
-  const [collections, setCollections] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState("");
-  const [newCollectionName, setNewCollectionName] = useState("");
-  const [activeTab, setActiveTab] = useState("existing");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [collections, setCollections] = useState([])
+  const [selectedCollection, setSelectedCollection] = useState('')
+  const [newCollectionName, setNewCollectionName] = useState('')
+  const [activeTab, setActiveTab] = useState('existing')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     if (isOpen) {
-      fetchCollections();
+      fetchCollections()
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   const fetchCollections = async () => {
     try {
-      const response = await axios.get("/api/collections");
-      setCollections(response.data.collections || []);
+      const response = await axios.get('/api/collections')
+      setCollections(response.data.collections || [])
     } catch (error) {
-      console.error("Error fetching collections:", error);
-      setError("Failed to fetch collections. Please try again.");
+      console.error('Error fetching collections:', error)
+      setError('Failed to fetch collections. Please try again.')
     }
-  };
+  }
 
   const validateNewCollectionName = () => {
     if (!newCollectionName.trim()) {
-      setError("Collection name cannot be empty");
-      return false;
+      setError('Collection name cannot be empty')
+      return false
     }
     if (
       collections.some(
         (collection) =>
           collection.name.toLowerCase() ===
-          newCollectionName.trim().toLowerCase(),
+          newCollectionName.trim().toLowerCase()
       )
     ) {
-      setError("A collection with this name already exists");
-      return false;
+      setError('A collection with this name already exists')
+      return false
     }
-    setError("");
-    return true;
-  };
+    setError('')
+    return true
+  }
 
   const handleAddToCollection = async () => {
-    if (activeTab === "existing" && !selectedCollection) {
-      setError("Please select a collection");
-      return;
+    if (activeTab === 'existing' && !selectedCollection) {
+      setError('Please select a collection')
+      return
     }
 
-    if (activeTab === "new" && !validateNewCollectionName()) {
-      return;
+    if (activeTab === 'new' && !validateNewCollectionName()) {
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      let collectionId;
-      if (activeTab === "new") {
+      let collectionId
+      if (activeTab === 'new') {
         // Create a new collection
-        const response = await axios.post("/api/collections", {
+        const response = await axios.post('/api/collections', {
           name: newCollectionName,
-          storeId,
-        });
-        collectionId = response.data._id;
+          storeId
+        })
+        collectionId = response.data._id
       } else {
-        collectionId = selectedCollection;
+        collectionId = selectedCollection
       }
 
       // Call the onSelectCollection prop function
-      await onSelectCollection(collectionId);
+      await onSelectCollection(collectionId)
 
-      onClose();
-      toast.success("Products added to collection successfully");
+      onClose()
+      toast.success('Products added to collection successfully')
     } catch (error) {
-      console.error("Error adding products to collection:", error);
-      setError("Failed to add products to collection. Please try again.");
+      console.error('Error adding products to collection:', error)
+      setError('Failed to add products to collection. Please try again.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -147,8 +147,8 @@ export default function SelectCollectionModal({
               placeholder="Enter new collection name"
               value={newCollectionName}
               onChange={(e) => {
-                setNewCollectionName(e.target.value);
-                setError("");
+                setNewCollectionName(e.target.value)
+                setError('')
               }}
               onBlur={validateNewCollectionName}
             />
@@ -163,10 +163,10 @@ export default function SelectCollectionModal({
             onClick={handleAddToCollection}
             disabled={isLoading || !!error}
           >
-            {isLoading ? "Adding..." : "Add to Collection"}
+            {isLoading ? 'Adding...' : 'Add to Collection'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
