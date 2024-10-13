@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React from 'react'
+import { Button } from '@/components/ui/button'
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   return (
@@ -22,7 +22,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         Next
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default Pagination;
+export default Pagination

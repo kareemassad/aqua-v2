@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { getSEOTags } from "@/lib/seo";
-import config from "@/config";
+import Link from 'next/link'
+import { getSEOTags } from '@/lib/seo'
+import config from '@/config'
 
 // CHATGPT PROMPT TO GENERATE YOUR PRIVACY POLICY — replace with your own data 👇
 
@@ -27,8 +27,8 @@ import config from "@/config";
 
 export const metadata = getSEOTags({
   title: `Privacy Policy | ${config.appName}`,
-  canonicalUrlRelative: "/privacy-policy",
-});
+  canonicalUrlRelative: '/privacy-policy'
+})
 
 const PrivacyPolicy = () => {
   return (
@@ -46,7 +46,7 @@ const PrivacyPolicy = () => {
               d="M15 10a.75.75 0 01-.75.75H7.612l2.158 1.96a.75.75 0 11-1.04 1.08l-3.5-3.25a.75.75 0 010-1.08l3.5-3.25a.75.75 0 111.04 1.08L7.612 9.25h6.638A.75.75 0 0115 10z"
               clipRule="evenodd"
             />
-          </svg>{" "}
+          </svg>{' '}
           Back
         </Link>
         <h1 className="text-3xl font-extrabold pb-6">
@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
 
         <pre
           className="leading-relaxed whitespace-pre-wrap"
-          style={{ fontFamily: "sans-serif" }}
+          style={{ fontFamily: 'sans-serif' }}
         >
           {`Last Updated: 2023-08-25
 
@@ -105,7 +105,7 @@ By using ShipFast, you consent to the terms of this Privacy Policy.`}
         </pre>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default PrivacyPolicy;
+export default PrivacyPolicy

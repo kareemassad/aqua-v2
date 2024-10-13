@@ -1,34 +1,34 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { PencilIcon, CheckIcon, TrashIcon } from "lucide-react";
+import React, { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { PencilIcon, CheckIcon, TrashIcon } from 'lucide-react'
 
 export default function ProductTable({
   data,
   onProductSelect,
   selectedProducts,
   onProductEdit,
-  onProductDelete,
+  onProductDelete
 }) {
-  const [editingId, setEditingId] = useState(null);
-  const [editedProduct, setEditedProduct] = useState({});
+  const [editingId, setEditingId] = useState(null)
+  const [editedProduct, setEditedProduct] = useState({})
 
   const handleEdit = (product) => {
-    setEditingId(product._id);
-    setEditedProduct(product);
-  };
+    setEditingId(product._id)
+    setEditedProduct(product)
+  }
 
   const handleSave = async () => {
-    await onProductEdit(editedProduct);
-    setEditingId(null);
-  };
+    await onProductEdit(editedProduct)
+    setEditingId(null)
+  }
 
   const handleChange = (e, field) => {
-    setEditedProduct({ ...editedProduct, [field]: e.target.value });
-  };
+    setEditedProduct({ ...editedProduct, [field]: e.target.value })
+  }
 
   return (
     <div className="overflow-x-auto">
@@ -42,9 +42,9 @@ export default function ProductTable({
                 }
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    onProductSelect(data.map((product) => product._id));
+                    onProductSelect(data.map((product) => product._id))
                   } else {
-                    onProductSelect([]);
+                    onProductSelect([])
                   }
                 }}
               />
@@ -73,7 +73,7 @@ export default function ProductTable({
                 {editingId === product._id ? (
                   <Input
                     value={editedProduct.name}
-                    onChange={(e) => handleChange(e, "name")}
+                    onChange={(e) => handleChange(e, 'name')}
                   />
                 ) : (
                   product.name
@@ -84,7 +84,7 @@ export default function ProductTable({
                   <Input
                     type="number"
                     value={editedProduct.sell_price}
-                    onChange={(e) => handleChange(e, "sell_price")}
+                    onChange={(e) => handleChange(e, 'sell_price')}
                   />
                 ) : (
                   `$${product.sell_price.toFixed(2)}`
@@ -95,7 +95,7 @@ export default function ProductTable({
                   <Input
                     type="number"
                     value={editedProduct.cost_price}
-                    onChange={(e) => handleChange(e, "cost_price")}
+                    onChange={(e) => handleChange(e, 'cost_price')}
                   />
                 ) : (
                   `$${product.cost_price.toFixed(2)}`
@@ -106,7 +106,7 @@ export default function ProductTable({
                   <Input
                     type="number"
                     value={editedProduct.inventory}
-                    onChange={(e) => handleChange(e, "inventory")}
+                    onChange={(e) => handleChange(e, 'inventory')}
                   />
                 ) : (
                   product.inventory
@@ -116,7 +116,7 @@ export default function ProductTable({
                 {editingId === product._id ? (
                   <Input
                     value={editedProduct.description}
-                    onChange={(e) => handleChange(e, "description")}
+                    onChange={(e) => handleChange(e, 'description')}
                   />
                 ) : (
                   product.description
@@ -149,5 +149,5 @@ export default function ProductTable({
         </tbody>
       </table>
     </div>
-  );
+  )
 }

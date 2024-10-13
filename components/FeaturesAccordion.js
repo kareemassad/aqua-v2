@@ -1,42 +1,42 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  AccordionTrigger
+} from '@/components/ui/accordion'
 
 const features = [
   {
-    title: "Ready-made Components",
+    title: 'Ready-made Components',
     description:
-      "Over 100+ customizable UI components to speed up your development.",
+      'Over 100+ customizable UI components to speed up your development.'
   },
   {
-    title: "API Integration",
-    description: "Seamlessly connect with popular APIs and services.",
+    title: 'API Integration',
+    description: 'Seamlessly connect with popular APIs and services.'
   },
   {
-    title: "Responsive Design",
+    title: 'Responsive Design',
     description:
-      "Ensure your app looks great on all devices with our responsive templates.",
+      'Ensure your app looks great on all devices with our responsive templates.'
   },
   {
-    title: "Authentication",
-    description: "Secure user authentication and authorization out of the box.",
+    title: 'Authentication',
+    description: 'Secure user authentication and authorization out of the box.'
   },
   {
-    title: "Database Solutions",
+    title: 'Database Solutions',
     description:
-      "Choose from SQL or NoSQL database options for your data needs.",
+      'Choose from SQL or NoSQL database options for your data needs.'
   },
   {
-    title: "Deployment Assistance",
-    description: "One-click deployment to popular hosting platforms.",
-  },
-];
+    title: 'Deployment Assistance',
+    description: 'One-click deployment to popular hosting platforms.'
+  }
+]
 
 const FeaturesAccordion = () => {
   return (
@@ -59,7 +59,7 @@ const FeaturesAccordion = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default FeaturesAccordion;
+export default FeaturesAccordion

@@ -1,87 +1,87 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import connectMongo from "@/lib/mongoose";
-import Collection from "@/models/Collection";
-import Product from "@/models/Product";
-import Store from "@/models/Store";
-import { authOptions } from "@/lib/next-auth";
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import connectMongo from '@/lib/mongoose'
+import Collection from '@/models/Collection'
+import Product from '@/models/Product'
+import Store from '@/models/Store'
+import { authOptions } from '@/lib/next-auth'
 
 export async function POST(request, { params }) {
-  const { collectionId } = params;
-  const session = await getServerSession(authOptions);
+  const { collectionId } = params
+  const session = await getServerSession(authOptions)
 
-  console.log("Session:", JSON.stringify(session, null, 2));
+  console.log('Session:', JSON.stringify(session, null, 2))
 
   if (!session) {
-    console.log("Unauthorized access attempt");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    console.log('Unauthorized access attempt')
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    await connectMongo();
-    console.log("Connected to MongoDB");
+    await connectMongo()
+    console.log('Connected to MongoDB')
 
-    const { product_id } = await request.json();
-    console.log("Received product_id:", product_id);
+    const { product_id } = await request.json()
+    console.log('Received product_id:', product_id)
 
-    const collection = await Collection.findById(collectionId);
-    console.log("Found collection:", collection);
+    const collection = await Collection.findById(collectionId)
+    console.log('Found collection:', collection)
 
     if (!collection) {
-      console.log("Collection not found");
+      console.log('Collection not found')
       return NextResponse.json(
-        { error: "Collection not found", status: "error" },
-        { status: 404 },
-      );
+        { error: 'Collection not found', status: 'error' },
+        { status: 404 }
+      )
     }
 
-    const store = await Store.findById(collection.store_id);
-    console.log("Found store:", store);
+    const store = await Store.findById(collection.store_id)
+    console.log('Found store:', store)
 
     if (store.user_id.toString() !== session.user.id) {
-      console.log("Unauthorized: User does not own this store");
+      console.log('Unauthorized: User does not own this store')
       return NextResponse.json(
-        { error: "Unauthorized", status: "error" },
-        { status: 403 },
-      );
+        { error: 'Unauthorized', status: 'error' },
+        { status: 403 }
+      )
     }
 
-    const product = await Product.findById(product_id);
-    console.log("Found product:", product);
+    const product = await Product.findById(product_id)
+    console.log('Found product:', product)
 
     if (!product) {
-      console.log("Product not found");
+      console.log('Product not found')
       return NextResponse.json(
-        { error: "Product not found", status: "error" },
-        { status: 404 },
-      );
+        { error: 'Product not found', status: 'error' },
+        { status: 404 }
+      )
     }
 
     if (collection.products.includes(product_id)) {
-      console.log("Product already in collection");
+      console.log('Product already in collection')
       return NextResponse.json(
-        { status: "duplicate", message: "Product already in collection" },
-        { status: 200 },
-      );
+        { status: 'duplicate', message: 'Product already in collection' },
+        { status: 200 }
+      )
     }
 
-    collection.products.push(product_id);
-    await collection.save();
-    console.log("Product added to collection");
+    collection.products.push(product_id)
+    await collection.save()
+    console.log('Product added to collection')
 
     return NextResponse.json(
-      { status: "added", message: "Product added to collection" },
-      { status: 200 },
-    );
+      { status: 'added', message: 'Product added to collection' },
+      { status: 200 }
+    )
   } catch (error) {
-    console.error("Error adding product to collection:", error);
+    console.error('Error adding product to collection:', error)
     return NextResponse.json(
       {
-        status: "error",
-        message: "Failed to add product to collection",
-        details: error.message,
+        status: 'error',
+        message: 'Failed to add product to collection',
+        details: error.message
       },
-      { status: 500 },
-    );
+      { status: 500 }
+    )
   }
 }

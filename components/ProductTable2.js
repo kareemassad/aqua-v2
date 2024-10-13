@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+  TableRow
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 
 const ProductTable = ({ products, onEdit, onDelete }) => {
   return (
@@ -49,7 +49,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
         ))}
       </TableBody>
     </Table>
-  );
-};
+  )
+}
 
-export default ProductTable;
+export default ProductTable

@@ -1,5 +1,5 @@
-import Link from "next/link";
-import config from "@/config";
+import Link from 'next/link'
+import config from '@/config'
 
 const Footer = () => {
   return (
@@ -120,7 +120,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Popover, Transition } from "@headlessui/react";
+import { Popover, Transition } from '@headlessui/react'
 
 const ButtonPopover = () => {
   return (
@@ -14,7 +14,7 @@ const ButtonPopover = () => {
               viewBox="0 0 20 20"
               fill="currentColor"
               className={`w-5 h-5 duration-200 ${
-                open ? "transform rotate-180 " : ""
+                open ? 'transform rotate-180 ' : ''
               }`}
             >
               <path
@@ -119,7 +119,7 @@ const ButtonPopover = () => {
         </>
       )}
     </Popover>
-  );
-};
+  )
+}
 
-export default ButtonPopover;
+export default ButtonPopover

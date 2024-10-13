@@ -18,11 +18,11 @@ const WithWithout = () => {
             <ul className="list-disc list-inside space-y-1.5 ">
               {/* Pains the user is experiencing by not using your product */}
               {[
-                "Manually create invoices",
-                "Or pay up to $2 per invoice",
-                "Waste hours in customer support",
-                "Can’t update details once sent (VAT, Tax ID)",
-                "Can't make invoices for previous purchases",
+                'Manually create invoices',
+                'Or pay up to $2 per invoice',
+                'Waste hours in customer support',
+                'Can’t update details once sent (VAT, Tax ID)',
+                "Can't make invoices for previous purchases"
               ].map((item, index) => (
                 <li key={index} className="flex gap-2 items-center">
                   <svg
@@ -47,11 +47,11 @@ const WithWithout = () => {
             <ul className="list-disc list-inside space-y-1.5 ">
               {/* Features of your product fixing the pain (try to match each with/withot lines) */}
               {[
-                "Self-serve invoices",
+                'Self-serve invoices',
                 `One-time payment for unlimited invoices`,
-                "No more customer support",
-                "Editable invoices to stay compliant",
-                "Invoices for any payment, even past ones",
+                'No more customer support',
+                'Editable invoices to stay compliant',
+                'Invoices for any payment, even past ones'
               ].map((item, index) => (
                 <li key={index} className="flex gap-2 items-center">
                   <svg
@@ -75,7 +75,7 @@ const WithWithout = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default WithWithout;
+export default WithWithout

@@ -1,48 +1,48 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 const CreateStore = () => {
   const [form, setForm] = useState({
-    name: "",
-    description: "",
-    logo: "",
-    contact_info: {},
-  });
-  const [stores, setStores] = useState([]);
-  const router = useRouter();
+    name: '',
+    description: '',
+    logo: '',
+    contact_info: {}
+  })
+  const [stores, setStores] = useState([])
+  const router = useRouter()
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const response = await axios.post("/api/stores", form);
-      toast.success("Store created successfully");
-      router.push(`/dashboard/store/${response.data._id}`);
+      const response = await axios.post('/api/stores', form)
+      toast.success('Store created successfully')
+      router.push(`/dashboard/store/${response.data._id}`)
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to create store");
+      toast.error(error.response?.data?.error || 'Failed to create store')
     }
-  };
+  }
 
   const fetchStores = async () => {
     try {
-      const response = await axios.get("/api/stores");
-      setStores(response.data.stores);
+      const response = await axios.get('/api/stores')
+      setStores(response.data.stores)
     } catch (error) {
-      console.error("Error fetching stores:", error);
+      console.error('Error fetching stores:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchStores();
-  }, []);
+    fetchStores()
+  }, [])
 
   return (
     <main className="max-w-md mx-auto p-4">
@@ -90,7 +90,7 @@ const CreateStore = () => {
         ))}
       </ul>
     </main>
-  );
-};
+  )
+}
 
-export default CreateStore;
+export default CreateStore

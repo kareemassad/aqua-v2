@@ -1,30 +1,30 @@
-"use client";
+'use client'
 
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const CollectionPage = () => {
-  const params = useParams();
-  const { linkId } = params;
-  const [collection, setCollection] = useState(null);
-  const [error, setError] = useState(null);
+  const params = useParams()
+  const { linkId } = params
+  const [collection, setCollection] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchCollection = async () => {
       try {
-        const response = await axios.get(`/api/collections/link/${linkId}`);
-        setCollection(response.data.collection);
+        const response = await axios.get(`/api/collections/link/${linkId}`)
+        setCollection(response.data.collection)
       } catch (err) {
-        setError("Collection not found or invalid link.");
+        setError('Collection not found or invalid link.')
       }
-    };
+    }
 
-    fetchCollection();
-  }, [linkId]);
+    fetchCollection()
+  }, [linkId])
 
-  if (error) return <div>{error}</div>;
-  if (!collection) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>
+  if (!collection) return <div>Loading...</div>
 
   return (
     <div>
@@ -39,7 +39,7 @@ const CollectionPage = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default CollectionPage;
+export default CollectionPage

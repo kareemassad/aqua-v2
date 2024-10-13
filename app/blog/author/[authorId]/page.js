@@ -1,24 +1,24 @@
-import Image from "next/image";
-import { authors, articles } from "../../_assets/content";
-import CardArticle from "../../_assets/components/CardArticle";
-import { getSEOTags } from "@/lib/seo";
-import config from "@/config";
+import Image from 'next/image'
+import { authors, articles } from '../../_assets/content'
+import CardArticle from '../../_assets/components/CardArticle'
+import { getSEOTags } from '@/lib/seo'
+import config from '@/config'
 
 export async function generateMetadata({ params }) {
-  const author = authors.find((author) => author.slug === params.authorId);
+  const author = authors.find((author) => author.slug === params.authorId)
 
   return getSEOTags({
     title: `${author.name}, Author at ${config.appName}'s Blog`,
     description: `${author.name}, Author at ${config.appName}'s Blog`,
-    canonicalUrlRelative: `/blog/author/${author.slug}`,
-  });
+    canonicalUrlRelative: `/blog/author/${author.slug}`
+  })
 }
 
 export default async function Author({ params }) {
-  const author = authors.find((author) => author.slug === params.authorId);
+  const author = authors.find((author) => author.slug === params.authorId)
   const articlesByAuthor = articles
     .filter((article) => article.author.slug === author.slug)
-    .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+    .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
 
   return (
     <>
@@ -77,5 +77,5 @@ export default async function Author({ params }) {
         </div>
       </section>
     </>
-  );
+  )
 }

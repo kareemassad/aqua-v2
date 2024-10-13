@@ -1,8 +1,8 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 // This is the category card that appears in the home page and in the category page
-const CardCategory = ({ category, tag = "h2" }) => {
-  const TitleTag = tag;
+const CardCategory = ({ category, tag = 'h2' }) => {
+  const TitleTag = tag
 
   return (
     <Link
@@ -15,7 +15,7 @@ const CardCategory = ({ category, tag = "h2" }) => {
         {category?.titleShort || category.title}
       </TitleTag>
     </Link>
-  );
-};
+  )
+}
 
-export default CardCategory;
+export default CardCategory

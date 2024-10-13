@@ -1,51 +1,51 @@
-"use client";
+'use client'
 
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  AccordionTrigger
+} from '@/components/ui/accordion'
 
 const faqList = [
   {
-    question: "What do I get exactly?",
-    answer: <div className="space-y-2 leading-relaxed">Loreum Ipseum</div>,
+    question: 'What do I get exactly?',
+    answer: <div className="space-y-2 leading-relaxed">Loreum Ipseum</div>
   },
   {
-    question: "Can I get a refund?",
+    question: 'Can I get a refund?',
     answer: (
       <p>
         Yes! You can request a refund within 7 days of your purchase. Reach out
         by email.
       </p>
-    ),
+    )
   },
   {
-    question: "I have another question",
+    question: 'I have another question',
     answer: (
       <div className="space-y-2 leading-relaxed">Cool, contact us by email</div>
-    ),
-  },
-];
+    )
+  }
+]
 
 const Item = ({ item }) => {
-  const accordion = useRef(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const accordion = useRef(null)
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <li>
       <button
         className="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
         onClick={(e) => {
-          e.preventDefault();
-          setIsOpen(!isOpen);
+          e.preventDefault()
+          setIsOpen(!isOpen)
         }}
         aria-expanded={isOpen}
       >
         <span
-          className={`flex-1 text-base-content ${isOpen ? "text-primary" : ""}`}
+          className={`flex-1 text-base-content ${isOpen ? 'text-primary' : ''}`}
         >
           {item?.question}
         </span>
@@ -60,7 +60,7 @@ const Item = ({ item }) => {
             height="2"
             rx="1"
             className={`transform origin-center transition duration-200 ease-out ${
-              isOpen && "rotate-180"
+              isOpen && 'rotate-180'
             }`}
           />
           <rect
@@ -69,7 +69,7 @@ const Item = ({ item }) => {
             height="2"
             rx="1"
             className={`transform origin-center rotate-90 transition duration-200 ease-out ${
-              isOpen && "rotate-180 hidden"
+              isOpen && 'rotate-180 hidden'
             }`}
           />
         </svg>
@@ -87,8 +87,8 @@ const Item = ({ item }) => {
         <div className="pb-5 leading-relaxed">{item?.answer}</div>
       </div>
     </li>
-  );
-};
+  )
+}
 
 const FAQ = () => {
   return (
@@ -126,7 +126,7 @@ const FAQ = () => {
         </Accordion>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default FAQ;
+export default FAQ

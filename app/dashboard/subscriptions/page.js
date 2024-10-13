@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const SubscriptionsPage = () => {
-  const [subscriptions, setSubscriptions] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([])
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await axios.get("/api/subscriptions");
-      setSubscriptions(response.data.subscriptions);
+      const response = await axios.get('/api/subscriptions')
+      setSubscriptions(response.data.subscriptions)
     } catch (error) {
-      console.error("Error fetching subscriptions:", error);
+      console.error('Error fetching subscriptions:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchSubscriptions();
-  }, []);
+    fetchSubscriptions()
+  }, [])
 
   return (
     <div>
@@ -30,7 +30,7 @@ const SubscriptionsPage = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default SubscriptionsPage;
+export default SubscriptionsPage

@@ -1,45 +1,45 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useSession } from "next-auth/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
-import { toast } from "react-toastify";
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useSession } from 'next-auth/react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Settings } from 'lucide-react'
+import { toast } from 'react-toastify'
 
 export default function AccountPage() {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession()
   const [user, setUser] = useState({
-    email: "",
-    storeName: "",
-  });
-  const [isLoading, setIsLoading] = useState(true);
+    email: '',
+    storeName: ''
+  })
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchAccountData = async () => {
-      if (status === "authenticated" && session?.user?.id) {
+      if (status === 'authenticated' && session?.user?.id) {
         try {
-          setIsLoading(true);
-          const response = await axios.get(`/api/dashboard`);
+          setIsLoading(true)
+          const response = await axios.get(`/api/dashboard`)
           setUser({
             email: response.data.user.email,
-            storeName: response.data.store.name,
-          });
+            storeName: response.data.store.name
+          })
         } catch (error) {
-          console.error("Error fetching account data:", error);
-          toast.error("Failed to load account data. Please try again.");
+          console.error('Error fetching account data:', error)
+          toast.error('Failed to load account data. Please try again.')
         } finally {
-          setIsLoading(false);
+          setIsLoading(false)
         }
       }
-    };
+    }
 
-    fetchAccountData();
-  }, [session, status]);
+    fetchAccountData()
+  }, [session, status])
 
-  if (status === "loading" || isLoading) return <div>Loading...</div>;
-  if (!session) return <div>Please sign in to view your account.</div>;
+  if (status === 'loading' || isLoading) return <div>Loading...</div>
+  if (!session) return <div>Please sign in to view your account.</div>
 
   return (
     <>
@@ -77,5 +77,5 @@ export default function AccountPage() {
         </Card>
       </div>
     </>
-  );
+  )
 }

@@ -19,16 +19,16 @@ const Arrow = ({ extraStyle }) => {
         />
       </g>
     </svg>
-  );
-};
+  )
+}
 const Step = ({ emoji, text }) => {
   return (
     <div className="w-full md:w-48 flex flex-col gap-2 items-center justify-center">
       <span className="text-4xl">{emoji}</span>
       <h3 className="font-bold">{text}</h3>
     </div>
-  );
-};
+  )
+}
 
 // Problem Agitation: A crucial, yet overlooked, component for a landing page that sells.
 // It goes under your Hero section, and above your Features section.
@@ -64,7 +64,7 @@ const Problem = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Problem;
+export default Problem

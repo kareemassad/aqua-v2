@@ -1,27 +1,27 @@
-"use client";
+'use client'
 
-import axios from "axios";
-import { useEffect, useState } from "react";
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const DiscoverPage = () => {
-  const [stores, setStores] = useState([]);
-  const [error, setError] = useState(null);
+  const [stores, setStores] = useState([])
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchPublicStores = async () => {
       try {
-        const response = await axios.get("/api/stores/public");
-        setStores(response.data.stores);
+        const response = await axios.get('/api/stores/public')
+        setStores(response.data.stores)
       } catch (err) {
-        setError("Failed to fetch public stores.");
+        setError('Failed to fetch public stores.')
       }
-    };
+    }
 
-    fetchPublicStores();
-  }, []);
+    fetchPublicStores()
+  }, [])
 
-  if (error) return <div>{error}</div>;
-  if (stores.length === 0) return <div>No public stores available.</div>;
+  if (error) return <div>{error}</div>
+  if (stores.length === 0) return <div>No public stores available.</div>
 
   return (
     <div>
@@ -34,7 +34,7 @@ const DiscoverPage = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default DiscoverPage;
+export default DiscoverPage

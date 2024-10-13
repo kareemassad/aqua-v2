@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { Popover, Transition } from "@headlessui/react";
-import Link from "next/link";
-import Image from "next/image";
-import logo from "@/app/icon.png";
-import config from "@/config";
-import { categories } from "../content";
-import ButtonSignin from "@/components/ButtonSignin";
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Popover, Transition } from '@headlessui/react'
+import Link from 'next/link'
+import Image from 'next/image'
+import logo from '@/app/icon.png'
+import config from '@/config'
+import { categories } from '../content'
+import ButtonSignin from '@/components/ButtonSignin'
 
 const links = [
   {
-    href: "/blog/",
-    label: "All Posts",
-  },
-];
+    href: '/blog/',
+    label: 'All Posts'
+  }
+]
 
 const cta = (
   <ButtonSignin text="Prevent disputes" extraStyle="btn-primary md:btn-sm" />
-);
+)
 
 const ButtonPopoverCategories = () => {
   return (
@@ -36,7 +36,7 @@ const ButtonPopoverCategories = () => {
               viewBox="0 0 20 20"
               fill="currentColor"
               className={`w-5 h-5 duration-200 ${
-                open ? "transform rotate-180 " : ""
+                open ? 'transform rotate-180 ' : ''
               }`}
             >
               <path
@@ -84,18 +84,18 @@ const ButtonPopoverCategories = () => {
         </>
       )}
     </Popover>
-  );
-};
+  )
+}
 
 const ButtonAccordionCategories = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
       <button
         onClick={(e) => {
-          e.preventDefault();
-          setIsOpen(!isOpen);
+          e.preventDefault()
+          setIsOpen(!isOpen)
         }}
         aria-expanded={isOpen}
         type="button"
@@ -107,7 +107,7 @@ const ButtonAccordionCategories = () => {
           viewBox="0 0 20 20"
           fill="currentColor"
           className={`w-5 h-5 duration-200 ${
-            isOpen ? "transform rotate-180 " : ""
+            isOpen ? 'transform rotate-180 ' : ''
           }`}
         >
           <path
@@ -133,20 +133,20 @@ const ButtonAccordionCategories = () => {
         </ul>
       )}
     </>
-  );
-};
+  )
+}
 
 // This is the header that appears on all pages in the /blog folder.
 // By default it shows the logo, the links, and the CTA.
 // In the links, there's a popover with the categories.
 const HeaderBlog = () => {
-  const searchParams = useSearchParams();
-  const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams()
+  const [isOpen, setIsOpen] = useState(false)
 
   // setIsOpen(false) when the route changes (i.e: when the user clicks on a link on mobile)
   useEffect(() => {
-    setIsOpen(false);
-  }, [searchParams]);
+    setIsOpen(false)
+  }, [searchParams])
 
   return (
     <header className="bg-base-200">
@@ -215,7 +215,7 @@ const HeaderBlog = () => {
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
-      <div className={`relative z-50 ${isOpen ? "" : "hidden"}`}>
+      <div className={`relative z-50 ${isOpen ? '' : 'hidden'}`}>
         <div
           className={`fixed inset-y-0 right-0 z-10 w-full px-8 py-3 overflow-y-auto bg-base-200 sm:max-w-sm sm:ring-1 sm:ring-neutral/10 transform origin-right transition ease-in-out duration-300`}
         >
@@ -284,7 +284,7 @@ const HeaderBlog = () => {
         </div>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default HeaderBlog;
+export default HeaderBlog

@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 
 export default function CollectionList() {
-  const [collections, setCollections] = useState([]);
+  const [collections, setCollections] = useState([])
 
   useEffect(() => {
     async function fetchCollections() {
-      const response = await fetch("/api/collections");
+      const response = await fetch('/api/collections')
       if (response.ok) {
-        const data = await response.json();
-        setCollections(data.collections);
+        const data = await response.json()
+        setCollections(data.collections)
       }
     }
-    fetchCollections();
-  }, []);
+    fetchCollections()
+  }, [])
 
   return (
     <div>
@@ -34,5 +34,5 @@ export default function CollectionList() {
         </ul>
       )}
     </div>
-  );
+  )
 }

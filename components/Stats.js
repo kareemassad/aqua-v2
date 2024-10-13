@@ -42,7 +42,7 @@ const Stats = () => {
         </dl>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Stats;
+export default Stats

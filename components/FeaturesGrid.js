@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React from 'react'
+import { Button } from '@/components/ui/button'
 
 const features = [
   {
-    title: "Collect user feedback",
+    title: 'Collect user feedback',
     description:
       "Use your Insighto's board to let users submit features they want.",
-    styles: "bg-primary text-primary-content",
+    styles: 'bg-primary text-primary-content',
     demo: (
       <div className="overflow-hidden h-full flex items-stretch">
         <div className="w-full translate-x-12 bg-base-200 rounded-t-box h-full p-6">
@@ -38,31 +38,31 @@ const features = [
           </div>
         </div>
       </div>
-    ),
+    )
   },
   {
-    title: "Prioritize features",
-    description: "Users upvote features they want. You know what to ship next.",
-    styles: "md:col-span-2 bg-base-300 text-base-content",
+    title: 'Prioritize features',
+    description: 'Users upvote features they want. You know what to ship next.',
+    styles: 'md:col-span-2 bg-base-300 text-base-content',
     demo: (
       <div className="px-6 max-w-[600px] flex flex-col gap-4 overflow-hidden">
         {[
           {
-            text: "Add LemonSqueezy integration to the boilerplate",
-            secondaryText: "Yes, ship this! ✅",
+            text: 'Add LemonSqueezy integration to the boilerplate',
+            secondaryText: 'Yes, ship this! ✅',
             votes: 48,
-            transition: "group-hover:-mt-36 group-hover:md:-mt-28 duration-500",
+            transition: 'group-hover:-mt-36 group-hover:md:-mt-28 duration-500'
           },
           {
-            text: "A new pricing table for metered billing",
-            secondaryText: "Maybe ship this 🤔",
-            votes: 12,
+            text: 'A new pricing table for metered billing',
+            secondaryText: 'Maybe ship this 🤔',
+            votes: 12
           },
           {
-            text: "A new UI library for the dashboard",
+            text: 'A new UI library for the dashboard',
             secondaryText: "But don't ship that ❌",
-            votes: 1,
-          },
+            votes: 1
+          }
         ].map((feature, i) => (
           <div
             className={`p-4 bg-base-100 text-base-content rounded-box flex justify-between mb-2 gap-4 ${feature?.transition}`}
@@ -97,36 +97,36 @@ const features = [
           </div>
         ))}
       </div>
-    ),
+    )
   },
   {
-    title: "Your brand, your board",
-    description: "Customize your Insighto board with 7 themes.",
-    styles: "md:col-span-2 bg-base-100 text-base-content",
+    title: 'Your brand, your board',
+    description: 'Customize your Insighto board with 7 themes.',
+    styles: 'md:col-span-2 bg-base-100 text-base-content',
     demo: (
       <div className="flex left-0 w-full h-full pt-0 lg:pt-8 overflow-hidden -mt-4">
         <div className="-rotate-[8deg] flex min-w-max overflow-x-visible h-full lg:pt-4">
           {[
             {
-              buttonStyles: "bg-primary text-primary-content",
-              css: "-ml-1 rotate-[6deg] w-72 h-72 z-30 bg-base-200 text-base-content rounded-2xl group-hover:-ml-64 group-hover:opacity-0 group-hover:scale-75 transition-all duration-500 p-4",
+              buttonStyles: 'bg-primary text-primary-content',
+              css: '-ml-1 rotate-[6deg] w-72 h-72 z-30 bg-base-200 text-base-content rounded-2xl group-hover:-ml-64 group-hover:opacity-0 group-hover:scale-75 transition-all duration-500 p-4'
             },
             {
-              buttonStyles: "bg-secondary text-secondary-content",
-              css: "rotate-[6deg] bg-base-200 text-base-content w-72 h-72 -mr-20 -ml-20 z-20 rounded-xl p-4",
+              buttonStyles: 'bg-secondary text-secondary-content',
+              css: 'rotate-[6deg] bg-base-200 text-base-content w-72 h-72 -mr-20 -ml-20 z-20 rounded-xl p-4'
             },
             {
-              buttonStyles: "bg-accent text-accent-content",
-              css: "rotate-[6deg] bg-base-200 text-base-content z-10 w-72 h-72 rounded-xl p-4",
+              buttonStyles: 'bg-accent text-accent-content',
+              css: 'rotate-[6deg] bg-base-200 text-base-content z-10 w-72 h-72 rounded-xl p-4'
             },
             {
-              buttonStyles: "bg-neutral text-neutral-content",
-              css: "rotate-[6deg] bg-base-200 text-base-content w-72 h-72 -ml-20 rounded-xl p-4",
+              buttonStyles: 'bg-neutral text-neutral-content',
+              css: 'rotate-[6deg] bg-base-200 text-base-content w-72 h-72 -ml-20 rounded-xl p-4'
             },
             {
-              buttonStyles: "bg-base-100 text-base-content",
-              css: "rotate-[6deg] bg-base-200 text-base-content w-72 h-72 -ml-10 -z-10 rounded-xl p-4 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300",
-            },
+              buttonStyles: 'bg-base-100 text-base-content',
+              css: 'rotate-[6deg] bg-base-200 text-base-content w-72 h-72 -ml-10 -z-10 rounded-xl p-4 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300'
+            }
           ].map((theme, i) => (
             <div className={theme.css} key={i}>
               <div className="font-medium uppercase tracking-wide text-base-content/60 text-sm mb-3">
@@ -190,33 +190,33 @@ const features = [
           ))}
         </div>
       </div>
-    ),
+    )
   },
   {
-    title: "Discover new ideas",
-    description: "Users can chat and discuss features.",
-    styles: "bg-neutral text-neutral-content",
+    title: 'Discover new ideas',
+    description: 'Users can chat and discuss features.',
+    styles: 'bg-neutral text-neutral-content',
     demo: (
       <div className="text-neutral-content px-6 space-y-4">
         {[
           {
             id: 1,
-            text: "Can we have a feature to add a custom domain to IndiePage?",
+            text: 'Can we have a feature to add a custom domain to IndiePage?',
             userImg:
-              "https://pbs.twimg.com/profile_images/1514863683574599681/9k7PqDTA_400x400.jpg",
-            userName: "Marc Lou",
-            createdAt: "2024-09-01T00:00:00Z",
+              'https://pbs.twimg.com/profile_images/1514863683574599681/9k7PqDTA_400x400.jpg',
+            userName: 'Marc Lou',
+            createdAt: '2024-09-01T00:00:00Z'
           },
           {
             id: 2,
             text: "I'd definitelly pay for that 🤩",
             userImg:
-              "https://pbs.twimg.com/profile_images/1778434561556320256/knBJT1OR_400x400.jpg",
-            userName: "Dan K.",
-            createdAt: "2024-09-02T00:00:00Z",
+              'https://pbs.twimg.com/profile_images/1778434561556320256/knBJT1OR_400x400.jpg',
+            userName: 'Dan K.',
+            createdAt: '2024-09-02T00:00:00Z',
             transition:
-              "opacity-0 group-hover:opacity-100 duration-500 translate-x-1/4 group-hover:translate-x-0",
-          },
+              'opacity-0 group-hover:opacity-100 duration-500 translate-x-1/4 group-hover:translate-x-0'
+          }
         ]?.map((reply) => (
           <div
             key={reply.id}
@@ -234,25 +234,25 @@ const features = [
               </div>
               •
               <div>
-                {new Date(reply.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
+                {new Date(reply.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
                 })}
               </div>
             </div>
           </div>
         ))}
       </div>
-    ),
-  },
-];
+    )
+  }
+]
 const FeaturesGrid = () => {
   return (
     <section className="flex justify-center items-center w-full bg-base-200/50 text-base-content py-20 lg:py-32">
       <div className="flex flex-col max-w-[82rem] gap-16 md:gap-20 px-4">
         <h2 className="max-w-3xl font-black text-4xl md:text-6xl tracking-[-0.01em]">
-          Ship features <br /> users{" "}
+          Ship features <br /> users{' '}
           <span className="underline decoration-dashed underline-offset-8 decoration-base-300">
             really want
           </span>
@@ -277,7 +277,7 @@ const FeaturesGrid = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default FeaturesGrid;
+export default FeaturesGrid

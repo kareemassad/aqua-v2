@@ -1,43 +1,43 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CardTitle
+} from '@/components/ui/card'
 
 const tiers = [
   {
-    name: "Hobby",
-    price: "Free",
-    description: "All the basics for starting a new business",
-    features: ["5 products", "Basic analytics", "Community support"],
+    name: 'Hobby',
+    price: 'Free',
+    description: 'All the basics for starting a new business',
+    features: ['5 products', 'Basic analytics', 'Community support']
   },
   {
-    name: "Startup",
-    price: "$79",
-    description: "Everything you need to launch and grow",
+    name: 'Startup',
+    price: '$79',
+    description: 'Everything you need to launch and grow',
     features: [
-      "Unlimited products",
-      "Advanced analytics",
-      "Priority support",
-      "Custom domain",
-    ],
+      'Unlimited products',
+      'Advanced analytics',
+      'Priority support',
+      'Custom domain'
+    ]
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    description: "Advanced features for scaling your business",
+    name: 'Enterprise',
+    price: 'Custom',
+    description: 'Advanced features for scaling your business',
     features: [
-      "Unlimited everything",
-      "Advanced security",
-      "24/7 phone support",
-      "Dedicated account manager",
-    ],
-  },
-];
+      'Unlimited everything',
+      'Advanced security',
+      '24/7 phone support',
+      'Dedicated account manager'
+    ]
+  }
+]
 
 const Pricing = () => {
   return (
@@ -92,7 +92,7 @@ const Pricing = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Pricing;
+export default Pricing

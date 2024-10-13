@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { CartProvider } from "@/contexts/CartContext";
-import { ToastContainer } from "react-toastify";
-import { SessionProvider } from "next-auth/react";
+import { CartProvider } from '@/contexts/CartContext'
+import { ToastContainer } from 'react-toastify'
+import { SessionProvider } from 'next-auth/react'
 
 export default function ClientLayout({ children }) {
   return (
@@ -22,5 +22,5 @@ export default function ClientLayout({ children }) {
         />
       </CartProvider>
     </SessionProvider>
-  );
+  )
 }
