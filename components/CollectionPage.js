@@ -4,7 +4,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Share2 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -29,8 +29,8 @@ export default function CollectionPage({ collection }) {
     fetchCollection()
   }, [linkId])
 
-  if (error) return <div>{error}</div>
-  if (!collectionState) return <div>Loading...</div>
+  if (error) return <div className="text-center text-red-500">{error}</div>
+  if (!collectionState) return <div className="text-center">Loading...</div>
 
   const handleDeleteProduct = async (productId) => {
     try {
@@ -42,7 +42,6 @@ export default function CollectionPage({ collection }) {
       )
       if (response.ok) {
         toast.success('Product removed from collection.')
-        // Optionally, refresh the page or update state
         router.refresh()
       } else {
         const errorData = await response.json()
@@ -54,22 +53,33 @@ export default function CollectionPage({ collection }) {
     }
   }
 
+  const handleShareClick = () => {
+    router.push('/dashboard/share')
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{collectionState.name}</h1>
-      <p>{collectionState.description}</p>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{collectionState.name}</h1>
+        <Button onClick={handleShareClick} variant="outline">
+          <Share2 className="mr-2 h-4 w-4" />
+          See your links
+        </Button>
+      </div>
+      <p className="mb-4">{collectionState.description}</p>
       {collectionState.products.length === 0 ? (
         <p>No products in this collection.</p>
       ) : (
-        <ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {collectionState.products.map((product) => (
-            <li
+            <div
               key={product._id}
-              className="flex justify-between items-center mb-2"
+              className="border p-4 rounded-lg flex justify-between items-center"
             >
-              <span>
-                {product.name} - ${product.sell_price.toFixed(2)}
-              </span>
+              <div>
+                <h3 className="font-semibold">{product.name}</h3>
+                <p>${product.sell_price.toFixed(2)}</p>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -77,9 +87,9 @@ export default function CollectionPage({ collection }) {
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   )
