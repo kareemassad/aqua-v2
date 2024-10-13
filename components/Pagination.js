@@ -1,7 +1,7 @@
-import React from 'react'
+// /components/Pagination.js
 import { Button } from '@/components/ui/button'
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+export default function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <div className="flex justify-center mt-4 space-x-2">
       <Button
@@ -24,5 +24,3 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     </div>
   )
 }
-
-export default Pagination

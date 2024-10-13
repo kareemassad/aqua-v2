@@ -24,14 +24,11 @@ export async function POST(request, { params }) {
     const store = await Store.findOne({ user_id: session.user.id })
 
     if (!store) {
-      console.log('Store not found for user:', session.user.id)
       return NextResponse.json(
         { error: 'Store not found for user' },
         { status: 404 }
       )
     }
-
-    console.log('StoreId:', store._id)
 
     const collection = await Collection.findOne({
       _id: collectionId,
@@ -50,7 +47,6 @@ export async function POST(request, { params }) {
 
     // Update the collection with the new unique link
     collection.unique_link = uniqueLink
-    console.log('unique_link:', uniqueLink)
 
     // Add the new link to the uniqueLinks array
     collection.uniqueLinks.push({
@@ -58,11 +54,8 @@ export async function POST(request, { params }) {
       createdAt: new Date(),
       clickCount: 0
     })
-    console.log('uniqueLinks:', collection.uniqueLinks)
 
     await collection.save()
-
-    console.log('Unique link generated:', uniqueLink)
     return NextResponse.json({ uniqueLink }, { status: 200 })
   } catch (error) {
     console.error('Error generating unique link:', error)

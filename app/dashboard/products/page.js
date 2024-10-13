@@ -12,13 +12,18 @@ import {
   TrashIcon,
   Boxes,
   Plus,
-  Upload
+  Upload,
+  Grid,
+  List
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import AddProductModal from '@/components/AddProductModal'
 import SelectCollectionModal from '@/components/SelectCollectionModal'
 import ExcelUploadModal from '@/components/ExcelUploadModal'
 import ProductTable from '@/components/ProductTable'
+import ProductGrid from '@/components/ProductGrid'
+import Pagination from '@/components/Pagination'
+import BulkEditModal from '@/components/BulkEditModal'
 
 export default function ProductsPage() {
   const { data: session } = useSession()
@@ -33,6 +38,8 @@ export default function ProductsPage() {
   const [isExcelUploadOpen, setIsExcelUploadOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedCollection, setSelectedCollection] = useState(null)
+  const [view, setView] = useState('table')
+  const [isBulkEditModalOpen, setIsBulkEditModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchStoreId = async () => {
@@ -179,6 +186,27 @@ export default function ProductsPage() {
     }
   }
 
+  const handleBulkEdit = async (editData) => {
+    setIsLoading(true)
+    try {
+      const response = await axios.put('/api/products/bulk-edit', {
+        productIds: selectedProducts,
+        ...editData
+      })
+      if (response.status === 200) {
+        toast.success('Products updated successfully')
+        fetchProducts()
+        setSelectedProducts([])
+      }
+    } catch (error) {
+      console.error('Error updating products:', error)
+      toast.error('Error updating products')
+    } finally {
+      setIsLoading(false)
+      setIsBulkEditModalOpen(false)
+    }
+  }
+
   return (
     <div className="space-y-4 p-8">
       <div className="flex justify-between items-center">
@@ -192,6 +220,13 @@ export default function ProductsPage() {
             <Upload className="mr-2 h-4 w-4" />
             Upload Excel
           </Button>
+          <Button onClick={() => setView(view === 'table' ? 'grid' : 'table')}>
+            {view === 'table' ? (
+              <Grid className="h-4 w-4" />
+            ) : (
+              <List className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </div>
 
@@ -202,15 +237,25 @@ export default function ProductsPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
-        <Button
-          onClick={handleAddToCollectionClick}
-          disabled={selectedProducts.length === 0}
-          variant="outline"
-          className="ml-4 flex items-center gap-2"
-        >
-          <Boxes className="h-4 w-4" />
-          Add to Collection
-        </Button>
+        <div>
+          <Button
+            onClick={handleAddToCollectionClick}
+            disabled={selectedProducts.length === 0}
+            variant="outline"
+            className="mr-2"
+          >
+            <Boxes className="mr-2 h-4 w-4" />
+            Add to Collection
+          </Button>
+          <Button
+            onClick={() => setIsBulkEditModalOpen(true)}
+            disabled={selectedProducts.length === 0}
+            variant="outline"
+          >
+            <PencilIcon className="mr-2 h-4 w-4" />
+            Bulk Edit
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -219,35 +264,31 @@ export default function ProductsPage() {
         <Suspense
           fallback={<div className="text-center py-4">Loading products...</div>}
         >
-          <ProductTable
-            data={products}
-            onProductSelect={handleProductSelect}
-            selectedProducts={selectedProducts}
-            onProductEdit={handleProductEdit}
-            onProductDelete={handleProductDelete}
-          />
+          {view === 'table' ? (
+            <ProductTable
+              data={products}
+              onProductSelect={handleProductSelect}
+              selectedProducts={selectedProducts}
+              onProductEdit={handleProductEdit}
+              onProductDelete={handleProductDelete}
+            />
+          ) : (
+            <ProductGrid
+              data={products}
+              onProductSelect={handleProductSelect}
+              selectedProducts={selectedProducts}
+              onProductEdit={handleProductEdit}
+              onProductDelete={handleProductDelete}
+            />
+          )}
         </Suspense>
       )}
 
-      <div className="flex justify-between items-center mt-4">
-        <Button
-          onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <Button
-          onClick={() =>
-            setCurrentPage((page) => Math.min(totalPages, page + 1))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       <AddProductModal
         isOpen={isAddModalOpen}
@@ -268,6 +309,13 @@ export default function ProductsPage() {
         isOpen={isExcelUploadOpen}
         onClose={() => setIsExcelUploadOpen(false)}
         onImportSuccess={handleImportSuccess}
+      />
+
+      <BulkEditModal
+        isOpen={isBulkEditModalOpen}
+        onClose={() => setIsBulkEditModalOpen(false)}
+        onBulkEdit={handleBulkEdit}
+        selectedProductsCount={selectedProducts.length}
       />
     </div>
   )
