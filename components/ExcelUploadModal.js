@@ -34,8 +34,14 @@ export default function ExcelUploadModal({ isOpen, onClose, onImportSuccess }) {
     }
   }
 
+  const handleOpenChange = (open) => {
+    if (!open) {
+      onClose()
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Upload Excel File</DialogTitle>
