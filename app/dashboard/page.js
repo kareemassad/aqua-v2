@@ -136,7 +136,7 @@ export default function Dashboard() {
             <p>
               <strong>Store Name:</strong> {user.storeName}
             </p>
-            <Link href="/dashboard/settings">
+            <Link href="/dashboard/account">
               <Button variant="outline" className="mt-4">
                 <Settings className="mr-2 h-4 w-4" />
                 Edit Settings

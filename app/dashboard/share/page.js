@@ -55,6 +55,7 @@ export default function SharePage() {
       )
       toast.success('Link created successfully')
       fetchLinks()
+      setSelectedCollection('')
     } catch (error) {
       console.error('Error creating link:', error)
       toast.error(error.response?.data?.error || 'Failed to create link')
@@ -93,7 +94,9 @@ export default function SharePage() {
             />
             <label htmlFor="public-switch">Public</label>
           </div>
-          <Button onClick={handleCreateLink}>Create Link</Button>
+          <Button onClick={handleCreateLink} disabled={!selectedCollection}>
+            Create Link
+          </Button>
         </div>
       </div>
 
@@ -149,7 +152,7 @@ export default function SharePage() {
                       size="sm"
                       onClick={() =>
                         window.open(
-                          `${window.location.origin}/collection/${link.linkId}`,
+                          `${window.location.origin}/collections/${link.linkId}`,
                           '_blank'
                         )
                       }

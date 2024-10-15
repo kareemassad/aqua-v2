@@ -1,12 +1,17 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
+const { withUt } = require('uploadthing/tw')
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+module.exports = withUt({
   darkMode: ['class'],
-  content: ['app/**/*.{js,jsx}', 'components/**/*.{js,jsx}'],
+  content: [
+    'app/**/*.{js,jsx}',
+    'components/**/*.{js,jsx}',
+    './src/**/*.{ts,tsx,mdx}'
+  ],
   theme: {
     container: {
-      center: 'true',
+      center: true,
       padding: '2rem',
       screens: {
         '2xl': '1400px'
@@ -58,20 +63,12 @@ module.exports = {
       },
       keyframes: {
         'accordion-down': {
-          from: {
-            height: '0'
-          },
-          to: {
-            height: 'var(--radix-accordion-content-height)'
-          }
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' }
         },
         'accordion-up': {
-          from: {
-            height: 'var(--radix-accordion-content-height)'
-          },
-          to: {
-            height: '0'
-          }
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' }
         }
       },
       animation: {
@@ -81,4 +78,4 @@ module.exports = {
     }
   },
   plugins: [require('tailwindcss-animate')]
-}
+})

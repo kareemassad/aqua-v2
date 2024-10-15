@@ -2,59 +2,82 @@
 import { createUploadthing } from 'uploadthing/next'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/next-auth'
-import * as XLSX from '@e965/xlsx'
+import { UploadThingError } from 'uploadthing/server'
+import { toast } from 'react-toastify'
 
 const f = createUploadthing()
 
-export const ourFileRouter = {
-  excelUploader: f([
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  ])
-    .middleware(async () => {
-      const session = await getServerSession(authOptions)
-      if (!session) throw new Error('Unauthorized')
-      return { userId: session.user.id }
+const getSession = async () => {
+  const session = await getServerSession(authOptions)
+  if (!session) throw new UploadThingError('Unauthorized')
+  return { userId: session.user.id }
+}
+
+export const uploadRouter = {
+  strictProfileImage: f({
+    image: { maxFileSize: '2MB', maxFileCount: 1, minFileCount: 1 }
+  })
+    .middleware(async ({ req }) => {
+      const session = await getSession()
+      if (!session) throw new UploadThingError('Unauthorized')
+      // Anything returned will be available in the onUploadComplete function.
+      return { userId: session.userId }
     })
-    .onUploadComplete(async ({ file, metadata }) => {
-      console.log('Excel upload completed', file)
+    .onUploadError((error) => {
+      console.log('Upload error:', error)
+      throw error
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log('Upload complete for userId:', metadata.userId)
+      console.log('file url', file.url)
+      // Whatever is returned here will be returned from the api endpoint (callback).
+      return { uploadedBy: metadata.userId }
+    }),
 
-      const response = await fetch(file.url)
-      const arrayBuffer = await response.arrayBuffer()
-      const workbook = XLSX.read(new Uint8Array(arrayBuffer), {
-        type: 'array'
-      })
-      const sheetName = workbook.SheetNames[0]
-      const worksheet = workbook.Sheets[sheetName]
-      const rawData = XLSX.utils.sheet_to_json(worksheet, {
-        header: 1,
-        defval: '',
-        blankrows: false
-      })
+  //csv files only
+  csvUploader: f({
+    text: {
+      maxFileSize: '1MB',
+      maxFileCount: 1,
+      accept: [
+        // Only accept csv files.
+        'text/csv'
+      ]
+    }
+  })
+    .middleware(async ({ req }) => {
+      const session = await getSession()
+      if (!session) throw new UploadThingError('Unauthorized')
+      return { userId: session.userId }
+    })
+    .onUploadError((error) => {
+      console.log('Upload error:', error)
+      toast.error('Upload error:', error)
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log('Excel/CSV upload complete for userId:', metadata.userId)
+      console.log('file url', file.key)
+      return { uploadedBy: metadata.userId, fileKey: file.key }
+    }),
 
-      // Find the first non-empty row as headers
-      const headerIndex = rawData.findIndex((row) =>
-        row.some((cell) => cell !== '')
-      )
-      const headers = rawData[headerIndex]
-
-      // Process the data
-      const products = rawData
-        .slice(headerIndex + 1)
-        .filter((row) => row.some((cell) => cell !== '')) // Remove empty rows
-        .map((row) => {
-          const product = {}
-          headers.forEach((header, index) => {
-            if (header) {
-              product[header.trim()] = row[index]
-                ? row[index].toString().trim()
-                : ''
-            }
-          })
-          return product
-        })
-
-      console.log('Parsed data:', products)
-
-      return { uploadedBy: metadata.userId, parsedData: products }
+  productImage: f({
+    image: {
+      maxFileSize: '4MB',
+      maxFileCount: 1
+    }
+  })
+    .middleware(async ({ req }) => {
+      const session = await getSession()
+      if (!session) throw new UploadThingError('Unauthorized')
+      return { userId: session.userId }
+    })
+    .onUploadError((error) => {
+      console.log('Upload error:', error)
+      toast.error('Upload error:', error)
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log('Image upload complete for userId:', metadata.userId)
+      console.log('imageKey', file.key)
+      return { uploadedBy: metadata.userId, imageKey: file.key }
     })
 }

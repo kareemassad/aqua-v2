@@ -199,18 +199,32 @@ export default function CollectionsPage() {
   }
 
   const handleGenerateLink = async (collectionId) => {
-    const response = await fetch(
-      `/api/collections/${collectionId}/generate-link`,
-      { method: 'POST' }
-    )
-    if (response.ok) {
-      const { uniqueLink } = await response.json()
-      console.log(`Unique link generated: ${uniqueLink}`)
-      // Optionally, display the link to the user
-      toast.success('Unique link generated successfully!')
-    } else {
-      const errorData = await response.json()
-      toast.error(errorData.error || 'Failed to generate unique link')
+    try {
+      const response = await fetch(
+        `/api/collections/${collectionId}/generate-link`,
+        { method: 'POST' }
+      )
+      if (response.ok) {
+        const { link } = await response.json()
+        toast.success('Unique link generated successfully!')
+        // Update the collection with the new link
+        setCollections((prevCollections) =>
+          prevCollections.map((collection) =>
+            collection._id === collectionId
+              ? {
+                  ...collection,
+                  uniqueLinks: [...collection.uniqueLinks, link]
+                }
+              : collection
+          )
+        )
+      } else {
+        const errorData = await response.json()
+        toast.error(errorData.error || 'Failed to generate unique link')
+      }
+    } catch (error) {
+      console.error('Error generating link:', error)
+      toast.error('An error occurred while generating the link')
     }
   }
 
@@ -406,27 +420,28 @@ export default function CollectionsPage() {
                     </Button>
                   </DialogContent>
                 </Dialog>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleGenerateLink(collection._id)}
-                >
-                  <Link className="mr-2 h-4 w-4" /> Generate Unique Link
-                </Button>
+                {collection.uniqueLinks && collection.uniqueLinks.length > 0 ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push('/dashboard/share')}
+                  >
+                    View Links
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleGenerateLink(collection._id)}
+                  >
+                    Generate Unique Link
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
         ))
       )}
-      <Button
-        onClick={handleAddToCollectionClick}
-        disabled={selectedProductIds.length === 0}
-        variant="outline"
-        className="ml-4 flex items-center gap-2"
-      >
-        <Boxes className="h-4 w-4" />
-        Add to Collection
-      </Button>
       <SelectCollectionModal
         isOpen={isSelectCollectionModalOpen}
         onClose={() => setIsSelectCollectionModalOpen(false)}

@@ -41,8 +41,14 @@ export async function GET(request) {
       .limit(limit)
       .lean()
 
+    // Decode HTML entities in product names
+    const decodedProducts = products.map((product) => ({
+      ...product,
+      name: product.name.replace(/&#x27;/g, "'").replace(/&quot;/g, '"')
+    }))
+
     return NextResponse.json(
-      { products, totalPages, totalProducts },
+      { products: decodedProducts, totalPages, totalProducts },
       { status: 200 }
     )
   } catch (error) {

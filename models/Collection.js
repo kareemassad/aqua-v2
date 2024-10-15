@@ -16,7 +16,6 @@ const CollectionSchema = new mongoose.Schema(
     },
     name: { type: String, required: true },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-    unique_link: { type: String, unique: true },
     uniqueLinks: [UniqueLinkSchema]
   },
   { timestamps: true }

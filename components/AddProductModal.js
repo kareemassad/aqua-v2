@@ -10,8 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import ImageDropZone from '@/components/uploadthing/ImageDropZone'
-
+import ImageUploadButton from '@/components/uploadthing/ImageUploadButton'
 export default function AddProductModal({
   isOpen,
   onClose,
@@ -121,7 +120,7 @@ export default function AddProductModal({
           </div>
           <div>
             <Label>Upload Image</Label>
-            <ImageDropZone onUploadSuccess={handleUploadSuccess} />
+            <ImageUploadButton onUploadSuccess={handleUploadSuccess} />
           </div>
           {imageUrl && (
             <div>

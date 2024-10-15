@@ -1,45 +1,89 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { PencilIcon, CheckIcon, TrashIcon } from 'lucide-react'
+import { toast } from 'react-toastify'
+import {
+  PencilIcon,
+  TrashIcon,
+  CheckIcon,
+  XIcon,
+  UploadIcon
+} from 'lucide-react'
+import { ImageUploadModal } from '@/components/uploadthing/ImageUploadModal'
+import { getImageUrl } from '@/lib/uploadthing' // Added import
 
 export default function ProductTable({
   data,
   onProductSelect,
   selectedProducts,
   onProductEdit,
-  onProductDelete
+  onProductDelete,
+  onImageUpload,
+  onImageUploadComplete // Existing prop
 }) {
-  const [editingId, setEditingId] = useState(null)
-  const [editedProduct, setEditedProduct] = useState({})
+  const [editingProduct, setEditingProduct] = useState(null)
+  const [editedValues, setEditedValues] = useState({})
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(null)
 
   const handleEdit = (product) => {
-    setEditingId(product._id)
-    setEditedProduct(product)
+    setEditingProduct(product._id)
+    setEditedValues(product)
   }
 
   const handleSave = async () => {
-    await onProductEdit(editedProduct)
-    setEditingId(null)
+    await onProductEdit(editedValues)
+    setEditingProduct(null)
   }
 
-  const handleChange = (e, field) => {
-    setEditedProduct({ ...editedProduct, [field]: e.target.value })
+  const handleCancel = () => {
+    setEditingProduct(null)
+    setEditedValues({})
+  }
+
+  const handleInputChange = (field, value) => {
+    setEditedValues({ ...editedValues, [field]: value })
+  }
+
+  const handleImageUpload = (productId) => {
+    console.log('Opening ImageUploadModal for productId:', productId)
+    setSelectedProductId(productId)
+    setIsImageUploadModalOpen(true)
+  }
+
+  const handleImageUploadComplete = async (imageKey) => {
+    // Changed parameter to imageKey
+    try {
+      await onImageUpload(selectedProductId, imageKey) // Updated to use selectedProductId
+      toast.success('Product image uploaded successfully')
+      setIsImageUploadModalOpen(false)
+      setSelectedProductId(null)
+    } catch (error) {
+      console.error('Error updating product image:', error)
+      toast.error('Failed to update product image')
+    }
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th className="px-6 py-3">
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[50px]">
               <Checkbox
-                checked={
-                  selectedProducts.length === data.length && data.length > 0
-                }
+                checked={selectedProducts.length === data.length}
                 onCheckedChange={(checked) => {
                   if (checked) {
                     onProductSelect(data.map((product) => product._id))
@@ -48,106 +92,142 @@ export default function ProductTable({
                   }
                 }}
               />
-            </th>
-            <th className="px-6 py-3">Name</th>
-            <th className="px-6 py-3">Sell Price</th>
-            <th className="px-6 py-3">Cost Price</th>
-            <th className="px-6 py-3">Inventory</th>
-            <th className="px-6 py-3">Description</th>
-            <th className="px-6 py-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+            <TableHead>Image</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Inventory</TableHead>
+            <TableHead>Cost Price</TableHead>
+            <TableHead>Sell Price</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {data.map((product) => (
-            <tr
-              key={product._id}
-              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-            >
-              <td className="px-6 py-4">
+            <TableRow key={product._id}>
+              <TableCell>
                 <Checkbox
                   checked={selectedProducts.includes(product._id)}
                   onCheckedChange={() => onProductSelect(product._id)}
                 />
-              </td>
-              <td className="px-6 py-4">
-                {editingId === product._id ? (
+              </TableCell>
+              <TableCell>
+                {product.imageKey ? ( // Changed from product.image to product.imageKey
+                  <Image
+                    src={getImageUrl(product.imageKey)} // Use getImageUrl to construct the URL
+                    alt={product.name}
+                    width={50}
+                    height={50}
+                    className="object-cover rounded cursor-pointer"
+                    onClick={() => handleImageUpload(product._id)}
+                  />
+                ) : (
+                  <div
+                    className="w-[50px] h-[50px] bg-gray-200 flex items-center justify-center rounded cursor-pointer hover:bg-gray-300 transition-colors"
+                    onClick={() => handleImageUpload(product._id)}
+                  >
+                    <UploadIcon className="text-gray-400" />
+                  </div>
+                )}
+              </TableCell>
+              <TableCell>
+                {editingProduct === product._id ? (
                   <Input
-                    value={editedProduct.name}
-                    onChange={(e) => handleChange(e, 'name')}
+                    value={editedValues.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
                   />
                 ) : (
                   product.name
                 )}
-              </td>
-              <td className="px-6 py-4">
-                {editingId === product._id ? (
+              </TableCell>
+              <TableCell>
+                {editingProduct === product._id ? (
                   <Input
                     type="number"
-                    value={editedProduct.sell_price}
-                    onChange={(e) => handleChange(e, 'sell_price')}
-                  />
-                ) : (
-                  `$${product.sell_price.toFixed(2)}`
-                )}
-              </td>
-              <td className="px-6 py-4">
-                {editingId === product._id ? (
-                  <Input
-                    type="number"
-                    value={editedProduct.cost_price}
-                    onChange={(e) => handleChange(e, 'cost_price')}
-                  />
-                ) : (
-                  `$${product.cost_price.toFixed(2)}`
-                )}
-              </td>
-              <td className="px-6 py-4">
-                {editingId === product._id ? (
-                  <Input
-                    type="number"
-                    value={editedProduct.inventory}
-                    onChange={(e) => handleChange(e, 'inventory')}
+                    value={editedValues.inventory}
+                    onChange={(e) =>
+                      handleInputChange('inventory', parseInt(e.target.value))
+                    }
                   />
                 ) : (
                   product.inventory
                 )}
-              </td>
-              <td className="px-6 py-4">
-                {editingId === product._id ? (
+              </TableCell>
+              <TableCell>
+                {editingProduct === product._id ? (
                   <Input
-                    value={editedProduct.description}
-                    onChange={(e) => handleChange(e, 'description')}
+                    type="number"
+                    value={editedValues.cost_price}
+                    onChange={(e) =>
+                      handleInputChange(
+                        'cost_price',
+                        parseFloat(e.target.value)
+                      )
+                    }
                   />
                 ) : (
-                  product.description
+                  `$${product.cost_price.toFixed(2)}`
                 )}
-              </td>
-              <td className="px-6 py-4">
-                {editingId === product._id ? (
-                  <Button onClick={handleSave} variant="ghost" size="sm">
-                    <CheckIcon className="h-4 w-4" />
-                  </Button>
+              </TableCell>
+              <TableCell>
+                {editingProduct === product._id ? (
+                  <Input
+                    type="number"
+                    value={editedValues.sell_price}
+                    onChange={(e) =>
+                      handleInputChange(
+                        'sell_price',
+                        parseFloat(e.target.value)
+                      )
+                    }
+                  />
                 ) : (
-                  <Button
-                    onClick={() => handleEdit(product)}
-                    variant="ghost"
-                    size="sm"
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
+                  `$${product.sell_price.toFixed(2)}`
                 )}
-                <Button
-                  onClick={() => onProductDelete(product._id)}
-                  variant="ghost"
-                  size="sm"
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              </td>
-            </tr>
+              </TableCell>
+              <TableCell>
+                {editingProduct === product._id ? (
+                  <>
+                    <Button variant="ghost" size="sm" onClick={handleSave}>
+                      <CheckIcon className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={handleCancel}>
+                      <XIcon className="h-4 w-4" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(product)}
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onProductDelete(product._id)}
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+      {isImageUploadModalOpen && selectedProductId && (
+        <ImageUploadModal
+          isOpen={isImageUploadModalOpen}
+          onClose={() => {
+            setIsImageUploadModalOpen(false)
+            setSelectedProductId(null)
+          }}
+          onUploadComplete={handleImageUploadComplete} // Use the updated handler
+          productId={selectedProductId}
+        />
+      )}
+    </>
   )
 }
