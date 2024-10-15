@@ -31,7 +31,7 @@ export async function POST(request) {
       inventory,
       description,
       store_id,
-      image,
+      imageKey,
       id_number
     } = payload
 
@@ -98,7 +98,9 @@ export async function POST(request) {
     const sanitizedIdNumber = id_number
       ? validator.escape(id_number.toString())
       : uuidv4() // Generate if not provided
-    const sanitizedImage = image ? validator.escape(image.toString()) : ''
+    const sanitizedImageKey = imageKey
+      ? validator.escape(imageKey.toString())
+      : ''
 
     // Check for duplicate products based on unique identifier (id_number)
     if (sanitizedIdNumber) {
@@ -128,7 +130,7 @@ export async function POST(request) {
       )
     }
 
-    // Create new product with backend-assigned ID and id_number
+    // Create new product with backend-assigned ID and imageKey
     const newProduct = await Product.create({
       store_id: store_id,
       name: validator.escape(name),
@@ -137,7 +139,7 @@ export async function POST(request) {
       inventory: parsedInventory,
       description: sanitizedDescription,
       id_number: sanitizedIdNumber,
-      image: sanitizedImage,
+      imageKey: sanitizedImageKey,
       product_id: uuidv4() // Backend-assigned ID
     })
 

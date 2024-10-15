@@ -78,3 +78,33 @@
 .btn-gradient {
   @apply bg-primary text-primary-foreground hover:bg-primary/90;
 }
+
+@layer components {
+  .ut-button {
+    @apply bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200;
+  }
+
+  .ut-button-active {
+    @apply bg-green-500 hover:bg-green-600;
+  }
+
+  .ut-button-disabled {
+    @apply bg-gray-400 cursor-not-allowed;
+  }
+
+  .ut-container {
+    @apply mb-4;
+  }
+
+  .ut-label {
+    @apply text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .ut-allowed-content {
+    @apply text-xs text-gray-500 mt-1;
+  }
+
+  .ut-upload-icon {
+    @apply w-5 h-5 mr-2;
+  }
+}

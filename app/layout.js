@@ -7,7 +7,7 @@ import ClientLayout from '@/components/ClientLayout' // We'll create this
 import 'react-toastify/dist/ReactToastify.css'
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
 import { extractRouterConfig } from 'uploadthing/server'
-import { ourFileRouter } from '@/app/api/uploadthing/core'
+import { uploadRouter } from './api/uploadthing/core'
 
 const font = Inter({ subsets: ['latin'] })
 
@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         </head>
       )}
       <body>
-        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+        <NextSSRPlugin routerConfig={extractRouterConfig(uploadRouter)} />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

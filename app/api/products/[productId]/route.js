@@ -19,18 +19,36 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   const { productId } = params
-  const updatedProduct = await request.json()
+  console.log('Received PUT request for productId:', productId)
+
+  await connectMongo()
 
   try {
-    await connectMongo()
-    const product = await Product.findByIdAndUpdate(productId, updatedProduct, {
-      new: true
+    const updateData = await request.json()
+    console.log('Updating product:', productId, 'with data:', updateData)
+
+    if (!productId) {
+      console.error('Product ID is undefined')
+      return NextResponse.json(
+        { error: 'Product ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const product = await Product.findByIdAndUpdate(productId, updateData, {
+      new: true,
+      runValidators: true
     })
+
     if (!product) {
+      console.log('Product not found:', productId)
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
     }
-    return NextResponse.json(product)
+
+    console.log('Product updated successfully:', product)
+    return NextResponse.json({ success: true, product })
   } catch (error) {
+    console.error('Error updating product:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

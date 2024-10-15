@@ -16,14 +16,14 @@ import {
   Grid,
   List
 } from 'lucide-react'
-import { toast } from 'react-hot-toast'
+import { toast } from 'react-toastify'
 import AddProductModal from '@/components/AddProductModal'
 import SelectCollectionModal from '@/components/SelectCollectionModal'
-import ExcelUploadModal from '@/components/ExcelUploadModal'
 import ProductTable from '@/components/ProductTable'
 import ProductGrid from '@/components/ProductGrid'
 import Pagination from '@/components/Pagination'
-import BulkEditModal from '@/components/BulkEditModal'
+import ExcelUploadButton from '@/components/uploadthing/ExcelUploadButton'
+import { ImageUploadModal } from '@/components/uploadthing/ImageUploadModal'
 
 export default function ProductsPage() {
   const { data: session } = useSession()
@@ -39,7 +39,8 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedCollection, setSelectedCollection] = useState(null)
   const [view, setView] = useState('table')
-  const [isBulkEditModalOpen, setIsBulkEditModalOpen] = useState(false)
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(null)
 
   useEffect(() => {
     const fetchStoreId = async () => {
@@ -111,7 +112,7 @@ export default function ProductsPage() {
   const handleProductEdit = async (editedProduct) => {
     try {
       const response = await axios.put(
-        `/api/products/${editedProduct.product_id}`,
+        `/api/products/${editedProduct._id}`,
         editedProduct
       )
       if (response.status === 200) {
@@ -148,15 +149,14 @@ export default function ProductsPage() {
   const handleAddToCollection = async (collectionId) => {
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/collections/${collectionId}/items`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ products: selectedProducts })
-      })
+      const response = await axios.post(
+        `/api/collections/${collectionId}/items`,
+        {
+          products: selectedProducts
+        }
+      )
 
-      const data = await response.json()
+      const data = response.data
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to add products to collection')
@@ -186,39 +186,29 @@ export default function ProductsPage() {
     }
   }
 
-  const handleBulkEdit = async (editData) => {
-    setIsLoading(true)
-    try {
-      const response = await axios.put('/api/products/bulk-edit', {
-        productIds: selectedProducts,
-        ...editData
-      })
-      if (response.status === 200) {
-        toast.success('Products updated successfully')
-        fetchProducts()
-        setSelectedProducts([])
-      }
-    } catch (error) {
-      console.error('Error updating products:', error)
-      toast.error('Error updating products')
-    } finally {
-      setIsLoading(false)
-      setIsBulkEditModalOpen(false)
-    }
+  const handleExcelUpload = (url) => {
+    console.log('Excel file uploaded:', url)
+    toast.success('Excel file uploaded successfully. Processing data...')
+  }
+
+  const handleImageUpload = (productId) => {
+    setSelectedProductId(productId)
+    setIsImageUploadModalOpen(true)
+  }
+
+  const handleImageUploadModalOpen = (productId) => {
+    setSelectedProductId(productId)
+    setIsImageUploadModalOpen(true)
   }
 
   return (
     <div className="space-y-4 p-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Product Dashboard</h1>
-        <div className="space-x-2">
+        <div className="space-x-2 flex items-center">
           <Button onClick={() => setIsAddModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add New Product
-          </Button>
-          <Button onClick={() => setIsExcelUploadOpen(true)}>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Excel
           </Button>
           <Button onClick={() => setView(view === 'table' ? 'grid' : 'table')}>
             {view === 'table' ? (
@@ -247,14 +237,6 @@ export default function ProductsPage() {
             <Boxes className="mr-2 h-4 w-4" />
             Add to Collection
           </Button>
-          <Button
-            onClick={() => setIsBulkEditModalOpen(true)}
-            disabled={selectedProducts.length === 0}
-            variant="outline"
-          >
-            <PencilIcon className="mr-2 h-4 w-4" />
-            Bulk Edit
-          </Button>
         </div>
       </div>
 
@@ -271,6 +253,8 @@ export default function ProductsPage() {
               selectedProducts={selectedProducts}
               onProductEdit={handleProductEdit}
               onProductDelete={handleProductDelete}
+              onImageUpload={handleImageUpload}
+              onImageUploadComplete={fetchProducts}
             />
           ) : (
             <ProductGrid
@@ -284,11 +268,14 @@ export default function ProductsPage() {
         </Suspense>
       )}
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <div className="flex justify-between items-center mt-4">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+        <ExcelUploadButton onUploadSuccess={handleExcelUpload} />
+      </div>
 
       <AddProductModal
         isOpen={isAddModalOpen}
@@ -305,18 +292,20 @@ export default function ProductsPage() {
         onSelectCollection={handleAddToCollection}
       />
 
-      <ExcelUploadModal
-        isOpen={isExcelUploadOpen}
-        onClose={() => setIsExcelUploadOpen(false)}
-        onImportSuccess={handleImportSuccess}
-      />
-
-      <BulkEditModal
-        isOpen={isBulkEditModalOpen}
-        onClose={() => setIsBulkEditModalOpen(false)}
-        onBulkEdit={handleBulkEdit}
-        selectedProductsCount={selectedProducts.length}
-      />
+      {isImageUploadModalOpen && selectedProductId && (
+        <ImageUploadModal
+          isOpen={isImageUploadModalOpen}
+          onClose={() => {
+            setIsImageUploadModalOpen(false)
+            setSelectedProductId(null)
+          }}
+          onUploadComplete={(imageKey) => {
+            // Update the product in the local state if needed
+            fetchProducts() // Refresh the product list
+          }}
+          productId={selectedProductId}
+        />
+      )}
     </div>
   )
 }

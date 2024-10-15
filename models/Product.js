@@ -12,7 +12,7 @@ const ProductSchema = new mongoose.Schema(
     cost_price: { type: Number, required: true },
     inventory: { type: Number, default: 0 },
     description: { type: String, default: '' },
-    imageUrl: { type: String, default: '' }
+    imageKey: { type: String, default: '' }
   },
   { timestamps: true }
 )
