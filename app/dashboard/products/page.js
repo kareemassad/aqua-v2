@@ -5,24 +5,12 @@ import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  PencilIcon,
-  CheckIcon,
-  TrashIcon,
-  Boxes,
-  Plus,
-  Upload,
-  Grid,
-  List
-} from 'lucide-react'
+import { Plus, Boxes } from 'lucide-react'
 import { toast } from 'react-toastify'
 import AddProductModal from '@/components/AddProductModal'
 import SelectCollectionModal from '@/components/SelectCollectionModal'
 import ProductTable from '@/components/ProductTable'
-import ProductGrid from '@/components/ProductGrid'
 import Pagination from '@/components/Pagination'
-import ExcelUploadButton from '@/components/uploadthing/ExcelUploadButton'
 import { ImageUploadModal } from '@/components/uploadthing/ImageUploadModal'
 
 export default function ProductsPage() {
@@ -35,10 +23,8 @@ export default function ProductsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [storeId, setStoreId] = useState(null)
   const [isSelectCollectionOpen, setIsSelectCollectionOpen] = useState(false)
-  const [isExcelUploadOpen, setIsExcelUploadOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedCollection, setSelectedCollection] = useState(null)
-  const [view, setView] = useState('table')
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState(null)
 
@@ -80,11 +66,6 @@ export default function ProductsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleImportSuccess = () => {
-    fetchProducts()
-    setIsExcelUploadOpen(false)
   }
 
   const handleAddToCollectionClick = () => {
@@ -202,42 +183,30 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="space-y-4 p-8">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Product Dashboard</h1>
-        <div className="space-x-2 flex items-center">
-          <Button onClick={() => setIsAddModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add New Product
-          </Button>
-          <Button onClick={() => setView(view === 'table' ? 'grid' : 'table')}>
-            {view === 'table' ? (
-              <Grid className="h-4 w-4" />
-            ) : (
-              <List className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
+        <Button onClick={() => setIsAddModalOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add New Product
+        </Button>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <Input
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
-        <div>
-          <Button
-            onClick={handleAddToCollectionClick}
-            disabled={selectedProducts.length === 0}
-            variant="outline"
-            className="mr-2"
-          >
-            <Boxes className="mr-2 h-4 w-4" />
-            Add to Collection
-          </Button>
-        </div>
+        <Button
+          onClick={handleAddToCollectionClick}
+          disabled={selectedProducts.length === 0}
+          variant="outline"
+        >
+          <Boxes className="mr-2 h-4 w-4" />
+          Add to Collection
+        </Button>
       </div>
 
       {isLoading ? (
@@ -246,7 +215,7 @@ export default function ProductsPage() {
         <Suspense
           fallback={<div className="text-center py-4">Loading products...</div>}
         >
-          {view === 'table' ? (
+          <div className="flex-grow overflow-auto">
             <ProductTable
               data={products}
               onProductSelect={handleProductSelect}
@@ -256,25 +225,16 @@ export default function ProductsPage() {
               onImageUpload={handleImageUpload}
               onImageUploadComplete={fetchProducts}
             />
-          ) : (
-            <ProductGrid
-              data={products}
-              onProductSelect={handleProductSelect}
-              selectedProducts={selectedProducts}
-              onProductEdit={handleProductEdit}
-              onProductDelete={handleProductDelete}
-            />
-          )}
+          </div>
         </Suspense>
       )}
 
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-center mt-4">
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-        <ExcelUploadButton onUploadSuccess={handleExcelUpload} />
       </div>
 
       <AddProductModal
@@ -300,8 +260,7 @@ export default function ProductsPage() {
             setSelectedProductId(null)
           }}
           onUploadComplete={(imageKey) => {
-            // Update the product in the local state if needed
-            fetchProducts() // Refresh the product list
+            fetchProducts()
           }}
           productId={selectedProductId}
         />
