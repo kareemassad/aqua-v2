@@ -21,18 +21,14 @@ export default async function LayoutPrivate({ children }) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-background">
-        <Sidebar className="w-64 border-r" />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-            </div>
+      <div className="flex h-screen overflow-hidden bg-background">
+        <Sidebar className="hidden md:block flex-shrink-0 border-r" />
+        <div className="flex flex-col flex-grow w-full overflow-hidden">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-2" />
           </header>
-          <main className="flex-1 overflow-x-hidden overflow-y-auto p-8">
-            {children}
-          </main>
-        </SidebarInset>
+          <main className="flex-grow overflow-auto">{children}</main>
+        </div>
       </div>
     </SidebarProvider>
   )

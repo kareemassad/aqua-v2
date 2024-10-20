@@ -183,8 +183,8 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col h-full p-4 md:p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold">Product Dashboard</h1>
         <Button onClick={() => setIsAddModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
@@ -192,17 +192,18 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <Input
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
         <Button
           onClick={handleAddToCollectionClick}
           disabled={selectedProducts.length === 0}
           variant="outline"
+          className="w-full sm:w-auto"
         >
           <Boxes className="mr-2 h-4 w-4" />
           Add to Collection
@@ -210,10 +211,16 @@ export default function ProductsPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-4">Loading products...</div>
+        <div className="flex-grow flex items-center justify-center">
+          Loading products...
+        </div>
       ) : (
         <Suspense
-          fallback={<div className="text-center py-4">Loading products...</div>}
+          fallback={
+            <div className="flex-grow flex items-center justify-center">
+              Loading products...
+            </div>
+          }
         >
           <div className="flex-grow overflow-auto">
             <ProductTable

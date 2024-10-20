@@ -59,7 +59,7 @@ export function Sidebar({ className }) {
   const menuList = getMenuList()
 
   return (
-    <ShadcnSidebar className={cn('pb-12', className)}>
+    <ShadcnSidebar className={cn('w-64 shrink-0', className)}>
       <SidebarHeader className="space-y-2 py-4 px-3">
         <h2 className="px-4 text-lg font-semibold tracking-tight">Dashboard</h2>
       </SidebarHeader>
