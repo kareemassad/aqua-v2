@@ -7,7 +7,8 @@ import Collection from '@/models/Collection'
 import CollectionItem from '@/models/CollectionItem'
 import { authOptions } from '@/lib/next-auth'
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request, props) {
+  const params = await props.params;
   const { collectionId, productId } = params
   const session = await getServerSession(authOptions)
 

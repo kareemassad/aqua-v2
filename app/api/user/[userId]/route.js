@@ -6,7 +6,8 @@ import Store from '@/models/Store'
 import Product from '@/models/Product'
 import { NextResponse } from 'next/server'
 
-export async function GET(req, { params }) {
+export async function GET(req, props) {
+  const params = await props.params;
   const { userId } = params
   const session = await getServerSession(authOptions)
 

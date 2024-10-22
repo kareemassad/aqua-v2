@@ -6,7 +6,8 @@ import connectMongo from '@/lib/mongoose'
 import Collection from '@/models/Collection'
 import { authOptions } from '@/lib/next-auth'
 
-export async function PUT(request, { params }) {
+export async function PUT(request, props) {
+  const params = await props.params;
   const { collectionId } = params
   const session = await getServerSession(authOptions)
 
@@ -41,7 +42,8 @@ export async function PUT(request, { params }) {
   }
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request, props) {
+  const params = await props.params;
   const { collectionId } = params
   const session = await getServerSession(authOptions)
 

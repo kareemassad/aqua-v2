@@ -7,7 +7,8 @@ import { authOptions } from '@/lib/next-auth'
 import { v4 as uuidv4 } from 'uuid'
 import Link from '@/models/Link'
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   const { collectionId } = params
   const session = await getServerSession(authOptions)
 

@@ -6,7 +6,8 @@ import Product from '@/models/Product'
 import Store from '@/models/Store'
 import { authOptions } from '@/lib/next-auth'
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   const { collectionId } = params
   const session = await getServerSession(authOptions)
 

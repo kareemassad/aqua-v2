@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import connectMongo from '@/lib/mongoose'
 import Product from '@/models/Product'
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const { productId } = params
   await connectMongo()
 
@@ -17,7 +18,8 @@ export async function GET(request, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
+export async function PUT(request, props) {
+  const params = await props.params;
   const { productId } = params
   console.log('Received PUT request for productId:', productId)
 

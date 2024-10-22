@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import connectMongo from '@/lib/mongoose'
 import User from '@/models/User'
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const { userId } = params
   await connectMongo()
 
