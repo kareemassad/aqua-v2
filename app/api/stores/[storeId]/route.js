@@ -5,7 +5,8 @@ import Store from '@/models/Store'
 import validator from 'validator'
 import { NextResponse } from 'next/server'
 
-export async function PUT(request, { params }) {
+export async function PUT(request, props) {
+  const params = await props.params;
   const { storeId } = params
   const session = await getServerSession(authOptions)
 

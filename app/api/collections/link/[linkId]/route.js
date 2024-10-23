@@ -3,7 +3,8 @@ import connectMongo from '@/lib/mongoose'
 import Collection from '@/models/Collection'
 import Link from '@/models/Link'
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const { linkId } = params
 
   try {

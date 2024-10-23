@@ -1,7 +1,8 @@
 import Product from '@/models/Product'
 import connectDB from '@/lib/mongoose'
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const { storeId } = params
   try {
     await connectDB()

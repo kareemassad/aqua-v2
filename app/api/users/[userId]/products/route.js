@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import connectMongo from '@/lib/mongoose'
 import Product from '@/models/Product'
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   await connectMongo()
   const { userId } = params
 
@@ -14,6 +15,6 @@ export async function GET(request, { params }) {
   }
 }
 
-export async function POST(request, { params }) {
-  // Add logic to create a product for a specific user
+export async function POST(request, props) {
+  const params = await props.params;
 }
